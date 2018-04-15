@@ -1,0 +1,51 @@
+import fetch from 'unfetch'
+import * as ErrorCodes from '~/ErrorCodes'
+
+function handleResolved(response) {
+  const { ok, status } = response
+  const result = {
+    ok,
+    status,
+    error: ok ? null : Error(response.statusText),
+    code: ErrorCodes.CLIENT_UNKNOWN,
+  }
+  return response
+    .json()
+    .then(data => Object.assign(result, data))
+    .catch(() => result)
+}
+
+function handleRejectd(error) {
+  return {
+    ok: false,
+    error,
+    code: ErrorCodes.CLIENT_UNKNOWN,
+  }
+}
+
+function logErr(result) {
+  if (!result.ok) {
+    // console.error(result.error)
+  }
+  return result
+}
+
+/**
+ * Requests a URL, returning a promise.
+ *
+ * @param  {string} url       The URL we want to request
+ * @param  {object} [options] The options we want to pass to "fetch"
+ * @return {object}
+ */
+export default function request(url, options = {}) {
+  return fetch(url, {
+    headers: {
+      'content-type': 'application/json',
+      ...options.headers,
+    },
+    credentials: 'same-origin',
+    ...options,
+  })
+    .then(handleResolved, handleRejectd)
+    .then(logErr)
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "dgeibi/react",
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "./webpack/resolve.config.js"
+      }
+    }
+  }
+}
