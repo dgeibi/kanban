@@ -15,7 +15,6 @@ const validateLogin = (req, res, next) => {
     res.status(400).json({ ok: false, code: ErrorCodes.LOGINED })
   } else {
     const { password, email } = req.body
-    console.log(req.body)
     validator.validate({ password, email }, errors => {
       if (errors && errors.length > 0) {
         console.log(errors)

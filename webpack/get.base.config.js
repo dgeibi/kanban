@@ -11,13 +11,11 @@ module.exports = ({ SERVER, PROD }) => {
       },
     })
   }
+  Env.definitions['process.env.SERVER'] = SERVER
+
   return {
     ...resolveConfig,
-    plugins: [
-      define({
-        'process.env.SERVER': SERVER,
-      }),
-    ],
+    plugins: [define(Env.definitions)],
     module: {
       rules: [
         {
@@ -28,9 +26,7 @@ module.exports = ({ SERVER, PROD }) => {
             babelrc: false,
             cacheDirectory: true,
             presets: [babelReactPreset],
-            plugins: [
-              ['emotion', { sourceMap: !PROD }],
-            ],
+            plugins: [['emotion', { sourceMap: !PROD }]],
           },
         },
       ],

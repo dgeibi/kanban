@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "dev": "rimraf dist && cross-env PASSWORD_SECRET=123deeaxvcd node ./webpack/hot.js",
     "build:client": "webpack --config ./webpack/client.config.js",
     "build:server": "webpack --config ./webpack/server.config.js",
     "start": "cross-env PASSWORD_SECRET=123deeaxvcd node ./dist/server.js",
@@ -37,8 +38,6 @@
     "unfetch": "^3.0.0"
   },
   "devDependencies": {
-    "uglifyjs-webpack-plugin": "^1.2.4",
-    "webpack-manifest-plugin": "^2.0.0",
     "@babel/core": "^7.0.0-beta.44",
     "babel-loader": "^8.0.0-beta.2",
     "babel-plugin-emotion": "^9.1.0",
@@ -47,11 +46,16 @@
     "eslint": "^4.19.1",
     "eslint-config-dgeibi": "^5.0.0",
     "eslint-import-resolver-webpack": "^0.9.0",
+    "execa": "^0.10.0",
     "mini-css-extract-plugin": "^0.4.0",
     "prettier": "^1.12.0",
     "rimraf": "^2.6.2",
+    "uglifyjs-webpack-plugin": "^1.2.4",
     "webpack": "^4.5.0",
     "webpack-cli": "^2.0.14",
+    "webpack-dev-middleware": "^3.1.2",
+    "webpack-hot-middleware": "^2.21.2",
+    "webpack-manifest-plugin": "^2.0.0",
     "webpack-merge": "^4.1.2",
     "webpack-node-externals": "^1.7.2"
   }

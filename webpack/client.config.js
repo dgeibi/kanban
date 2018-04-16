@@ -26,7 +26,7 @@ module.exports = merge([
       path: Env.Dist.public,
       filename: PROD ? '[name].[chunkhash:8].js' : '[name].js',
     },
-    entry: './src/client/client.js',
+    entry: ['./src/client/client.js'],
     plugins: [new ManifestPlugin()],
   },
 ])

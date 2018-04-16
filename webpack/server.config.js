@@ -1,14 +1,17 @@
 const nodeExternals = require('webpack-node-externals')
-const path = require('path')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const merge = require('webpack-merge')
 const getBase = require('./get.base.config')
 
-module.exports = merge(getBase({ SERVER: true, PROD: true }), {
-  entry: './src/server/server.js',
-  mode: process.env.NODE_ENV || 'development',
+const mode = process.env.NODE_ENV || 'development'
+const PROD = mode === 'production'
+
+module.exports = merge(getBase({ SERVER: true, PROD }), {
+  entry: ['./src/server/server.js'],
+  mode,
   output: {
     filename: 'server.js',
+    libraryTarget: 'commonjs2',
   },
   devtool: 'source-map',
   node: {
@@ -21,19 +24,25 @@ module.exports = merge(getBase({ SERVER: true, PROD: true }), {
     setImmediate: false,
   },
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [
+    nodeExternals({
+      whitelist: [/^webpack\/hot\//],
+    }),
+  ],
   optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        uglifyOptions: {
-          compress: false,
-          ecma: 8,
-          mangle: true,
-        },
-        sourceMap: true,
-      }),
-    ],
+    minimizer: PROD
+      ? [
+          new UglifyJsPlugin({
+            cache: true,
+            parallel: true,
+            uglifyOptions: {
+              compress: false,
+              ecma: 8,
+              mangle: true,
+            },
+            sourceMap: true,
+          }),
+        ]
+      : undefined,
   },
 })

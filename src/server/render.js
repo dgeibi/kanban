@@ -4,15 +4,30 @@ import { StaticRouter } from 'dva/router'
 import { Helmet } from 'react-helmet'
 import { createMemoryHistory } from 'history'
 import fs from 'fs'
+import path from 'path'
 
 import Root from '../app/Root'
 import createApp from '../app/createApp'
 
-const manifest = JSON.parse(
-  fs.readFileSync(`./dist/public/manifest.json`, 'utf8')
-)
+let manifest
+
+if (process.env.HOT_MODE) {
+  module.hot.accept(['../app/createApp', '../app/Root'])
+}
+
+const ensureManifest = () => {
+  if (!manifest) {
+    manifest = JSON.parse(
+      (global.mfs || fs).readFileSync(
+        path.resolve(`./dist/public/manifest.json`),
+        'utf8'
+      )
+    )
+  }
+}
 
 export default function render(req, res) {
+  ensureManifest()
   const context = {}
   const pathname = req.url
   const app = createApp({
@@ -39,7 +54,9 @@ export default function render(req, res) {
   ${helmet.title.toString()}
 </head>
 <body><div id="root">${appHTML}</div></body>
-<script id="preload">window.GET_PRELOAD = function () {document.getElementById('preload').textContent='';delete window.GET_PRELOAD;return {token: "${req.csrfToken()}",state: ${JSON.stringify(preloadedState)}}}</script>
+<script id="preload">window.GET_PRELOAD = function () {document.getElementById('preload').textContent='';delete window.GET_PRELOAD;return {token: "${req.csrfToken()}",state: ${JSON.stringify(
+    preloadedState
+  )}}}</script>
 <script src=${manifest['main.js']}></script>
 </html>
 `
