@@ -1,7 +1,7 @@
 
 ## CSRF
 
-由于本 app 使用非跨域 AJAX JSON，不需要 CSRF Token。
+<s>由于本 app 使用非跨域 AJAX JSON，不需要 CSRF Token</s>
 
 了解 CSRF 防范：
 

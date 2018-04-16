@@ -5,22 +5,15 @@ import { createBrowserHistory } from 'history'
 
 import router from './router'
 import createApp from '../app/createApp'
+import { setToken } from '../app/utils/request'
 
-const remove = (node) => {
-  if (node.remove) {
-    node.remove()
-  } else if (node.parentNode !== null) {
-    node.parentNode.removeChild(node)
-  }
-}
+const { token, state } = window.GET_PRELOAD()
 
-const initialState = window.PRELOADED_STATE
-delete window.PRELOADED_STATE
-remove(document.querySelector('#preload'))
+setToken(token)
 
 const app = createApp({
   router,
-  initialState,
+  initialState: state,
   history: createBrowserHistory(),
 })
 

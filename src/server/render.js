@@ -39,9 +39,7 @@ export default function render(req, res) {
   ${helmet.title.toString()}
 </head>
 <body><div id="root">${appHTML}</div></body>
-<script id="preload">
-  window.PRELOADED_STATE = ${JSON.stringify(preloadedState)}
-</script>
+<script id="preload">window.GET_PRELOAD = function () {document.getElementById('preload').textContent='';delete window.GET_PRELOAD;return {token: "${req.csrfToken()}",state: ${JSON.stringify(preloadedState)}}}</script>
 <script src=${manifest['main.js']}></script>
 </html>
 `

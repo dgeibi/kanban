@@ -1,6 +1,17 @@
 import fetch from 'unfetch'
 import * as ErrorCodes from '~/ErrorCodes'
 
+let csrfToken
+
+export function setToken(token) {
+  csrfToken = token
+}
+
+function isJSON(res) {
+  const ret = res.headers.get('content-type')
+  return ret && ret.indexOf('json') > 0
+}
+
 function handleResolved(response) {
   const { ok, status } = response
   const result = {
@@ -9,10 +20,13 @@ function handleResolved(response) {
     error: ok ? null : Error(response.statusText),
     code: ErrorCodes.CLIENT_UNKNOWN,
   }
-  return response
-    .json()
-    .then(data => Object.assign(result, data))
-    .catch(() => result)
+  if (isJSON(response)) {
+    return response
+      .json()
+      .then(data => Object.assign(result, data))
+      .catch(() => result)
+  }
+  return result
 }
 
 function handleRejectd(error) {
@@ -40,6 +54,7 @@ function logErr(result) {
 export default function request(url, options = {}) {
   return fetch(url, {
     headers: {
+      'CSRF-Token': csrfToken,
       'content-type': 'application/json',
       ...options.headers,
     },

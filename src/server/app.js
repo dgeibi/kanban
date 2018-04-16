@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import session from 'express-session'
 import LocalStrategy from 'passport-local'
 import path from 'path'
+import csurf from 'csurf'
 
 import * as ErrorCodes from '~/ErrorCodes'
 // import favicon from 'serve-favicon'
@@ -75,11 +76,13 @@ app.use(passport.session())
 
 // app.use(favicon(`${__dirname}/public/favicon.ico`))
 
+app.use(csurf())
+
 app.use('/join', join)
 app.use('/login', login)
 app.post('/logout', (req, res) => {
   req.logout()
-  res.json({ ok: true })
+  res.end()
 })
 
 const auth = (req, res, next) => {
@@ -93,10 +96,15 @@ app.all('/api/*', auth)
 app.get('*', fetchClientData, render)
 
 app.use((err, req, res, next) => {
+  console.error(err)
   if (res.headersSent) {
     next(err)
+  } else if (err.code === 'EBADCSRFTOKEN') {
+    res.status(403).json({
+      ok: false,
+      code: ErrorCodes.EBADCSRFTOKEN,
+    })
   } else {
-    console.error(err)
     res.status(500).json({
       ok: false,
       code: ErrorCodes.SEVER_UNKNOWN,
