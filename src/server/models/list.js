@@ -1,10 +1,14 @@
-import Sequelize from 'sequelize' // eslint-disable-line
+import Sequelize from 'sequelize'
 
 /**
  * @param {Sequelize.Sequelize} sequelize
  */
 export default function(sequelize) {
   const List = sequelize.define('List', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.CHAR(21),
+    },
     title: {
       type: Sequelize.STRING(255),
       allowNull: false,

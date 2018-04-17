@@ -1,6 +1,7 @@
 import { Router } from 'express'
+import models from '~/server/models'
 import card from './card'
-import models from '../models'
+
 
 const r = Router()
 

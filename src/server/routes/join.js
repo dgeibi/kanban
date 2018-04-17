@@ -1,6 +1,8 @@
 import * as ErrorCodes from '~/ErrorCodes'
 import { Router } from 'express'
 import Schema from 'async-validator'
+import nanoid from 'nanoid'
+
 import models from '../models'
 import hashPw from '../security/hashPw'
 
@@ -24,7 +26,7 @@ router.post('/', (req, res, next) => {
     if (errors && errors.length > 0) {
       res.status(400).json({ ok: false, code: ErrorCodes.INVALID_INPUT })
     } else {
-      User.create({ username, email, password: hashPw(password) })
+      User.create({ id: nanoid(), username, email, password: hashPw(password) })
         .then(user => {
           req.login(user, e => {
             if (e) {

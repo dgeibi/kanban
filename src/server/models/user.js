@@ -5,6 +5,10 @@ import Sequelize from 'sequelize'
  */
 export default function(sequelize) {
   const User = sequelize.define('User', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.CHAR(21),
+    },
     username: {
       allowNull: false,
       type: Sequelize.STRING(255),

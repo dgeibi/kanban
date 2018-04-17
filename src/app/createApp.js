@@ -8,7 +8,7 @@ export default function createApp({ initialState, history, router }) {
   })
   hot.patch(app)
   app.model(require('./models/user').default)
-  app.model(require('./models/board').default)
+  app.model(require('./models/boards').default)
   app.router(router)
   return app
 }

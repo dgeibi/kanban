@@ -60,5 +60,5 @@ export default function render(req, res) {
 <script src=${manifest['main.js']}></script>
 </html>
 `
-  res.send(html)
+  res.status(context.status || 200).send(html)
 }

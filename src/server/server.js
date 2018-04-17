@@ -4,7 +4,7 @@ import makeDebug from 'debug'
 import db from './models'
 import appPromise from './app'
 
-const debug = makeDebug('express-sequelize')
+const debug = makeDebug('server')
 
 /**
  * Normalize a port into a number, string, or false.

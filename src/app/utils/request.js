@@ -18,7 +18,7 @@ function handleResolved(response) {
     ok,
     status,
     error: ok ? null : Error(response.statusText),
-    code: ErrorCodes.CLIENT_UNKNOWN,
+    code: ok ? undefined : ErrorCodes.CLIENT_UNKNOWN,
   }
   if (isJSON(response)) {
     return response
@@ -51,7 +51,7 @@ function logErr(result) {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}
  */
-export default function request(url, options = {}) {
+function request(url, options = {}) {
   return fetch(url, {
     headers: {
       'CSRF-Token': csrfToken,
@@ -63,4 +63,10 @@ export default function request(url, options = {}) {
   })
     .then(handleResolved, handleRejectd)
     .then(logErr)
+}
+
+export default request
+
+if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
+  window.request = request
 }

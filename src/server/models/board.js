@@ -5,6 +5,10 @@ import Sequelize from 'sequelize'
  */
 export default function(sequelize) {
   const Board = sequelize.define('Board', {
+    id: {
+      primaryKey: true,
+      type: Sequelize.CHAR(21),
+    },
     title: {
       type: Sequelize.STRING(255),
       allowNull: false,

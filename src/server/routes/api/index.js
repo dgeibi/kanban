@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import board from "./board";
+import board from './board'
 
 const api = Router()
 

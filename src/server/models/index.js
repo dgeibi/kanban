@@ -15,7 +15,7 @@ const r = require.context('./', false, /^\.\/(?!index).*\.js$/)
 
 r.keys().forEach(key => {
   const x = r(key).default
-  const model = x(sequelize, Sequelize)
+  const model = x(sequelize)
   db[model.name] = model
 })
 

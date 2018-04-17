@@ -39,8 +39,13 @@ function Join({ user, history, dispatch }) {
         return false
       }}
     >
-      <input name="email" placeholder="email" />
-      <input name="password" type="password" placeholder="password" />
+      <input name="email" placeholder="email" autoComplete="true" />
+      <input
+        name="password"
+        type="password"
+        placeholder="password"
+        autoComplete="true"
+      />
       <button>提交</button>
     </form>
   )

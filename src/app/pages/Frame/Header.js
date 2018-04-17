@@ -1,7 +1,8 @@
 import React from 'react'
+import { connect } from 'dva'
 
-export default function Header() {
-  return (
-    <header> this is header </header>
-  )
+function Header() {
+  return <header> this is header </header>
 }
+
+export default connect(({ user }) => ({ user }))(Header)
