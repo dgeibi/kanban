@@ -2,7 +2,7 @@ import express from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'
 
-import preparePublic from './preparePublic'
+import prepareStatic from './prepareStatic'
 import security from './security/middleware'
 import auth from './security/auth'
 // import favicon from 'serve-favicon'
@@ -14,7 +14,7 @@ import fetchClientData from './fetchClientData'
 import render from './render'
 import handleError from './handleError'
 
-export default preparePublic().then(staticMiddleware => {
+export default prepareStatic().then(staticMiddleware => {
   const app = express()
   app.use(logger('dev'))
   app.use('/public', staticMiddleware)

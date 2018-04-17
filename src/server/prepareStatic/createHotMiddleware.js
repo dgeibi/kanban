@@ -33,26 +33,26 @@ const historyApi = ({ compiler, filename }) =>
     })
   }
 
-export default async ({ config, historyApiFallback  }) => {
-  const webpackConfig = await normalizeConfig(config)
-  webpackConfig.plugins = webpackConfig.plugins || []
+export default async function ({ config, historyApiFallback }) {
+  const webpackConfig = await normalizeConfig(config);
+  webpackConfig.plugins = webpackConfig.plugins || [];
   const firstBuildDone = new Promise(resolve => {
     webpackConfig.plugins.push(function buildDone() {
-      this.hooks.done.tap('firstBuildDone', resolve)
-    })
-  })
-  const compiler = webpack(webpackConfig)
+      this.hooks.done.tap('firstBuildDone', resolve);
+    });
+  });
+  const compiler = webpack(webpackConfig);
   const middleware = [
     webpackDevMiddleware(compiler, {
       publicPath: '/',
     }),
     webpackHotMiddleware(compiler),
-  ]
+  ];
   if (historyApiFallback) {
-    middleware.push(historyApi({ compiler }))
+    middleware.push(historyApi({ compiler }));
   }
-  await firstBuildDone
-  global.mfs = compiler.outputFileSystem
-  console.log('client build done!')
-  return middleware
+  await firstBuildDone;
+  global.mfs = compiler.outputFileSystem;
+  console.log('client build done!！');
+  return middleware;
 }
