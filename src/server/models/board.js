@@ -18,8 +18,8 @@ export default function(sequelize) {
     },
   })
   Board.associate = models => {
-    models.Board.hasMany(models.List)
-    models.Board.belongsTo(models.User, {
+    Board.List = models.Board.hasMany(models.List)
+    Board.User = models.Board.belongsTo(models.User, {
       onDelete: 'CASCADE',
       foreignKey: {
         allowNull: false,

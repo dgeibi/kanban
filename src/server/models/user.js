@@ -23,7 +23,7 @@ export default function(sequelize) {
     },
   })
   User.associate = models => {
-    models.User.hasMany(models.Board)
+    User.Board = models.User.hasMany(models.Board)
   }
   return User
 }

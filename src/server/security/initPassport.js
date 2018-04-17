@@ -11,13 +11,10 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser((id, done) => {
-  User.findAll({
-    where: {
-      id,
-    },
+  User.findById(id, {
     attributes: ['id', 'username', 'email'],
   })
-    .then(([{ dataValues }]) => {
+    .then(({ dataValues }) => {
       done(null, dataValues)
     })
     .catch(done)

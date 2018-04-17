@@ -1,28 +1,40 @@
 import { Router } from 'express'
 import models from '~/server/models'
+import trulyArray from '~/utils/trulyArray'
 import list from './list'
 
 const b = Router()
 
-const { Board, List, Card } = models
+const { Board, List } = models
 
 b.post('/create', (req, res, next) => {
-  const { id, title } = req.body
-  Board.create({
-    id,
-    title,
-    UserId: req.user.id,
-  })
+  const { id, title, Lists } = req.body
+  Board.create(
+    {
+      id,
+      title,
+      Lists,
+      UserId: req.user.id,
+    },
+    {
+      include: trulyArray([
+        Lists && {
+          association: Board.List,
+          include: [List.Card],
+        },
+      ]),
+    }
+  )
     .then(() => {
       res.end()
     })
     .catch(next)
 })
 
-b.delete('/:board_id/destroy', (req, res, next) => {
+b.delete('/:BoardId/destroy', (req, res, next) => {
   Board.destroy({
     where: {
-      id: req.params.board_id,
+      id: req.params.BoardId,
     },
   })
     .then(() => {
@@ -31,23 +43,16 @@ b.delete('/:board_id/destroy', (req, res, next) => {
     .catch(next)
 })
 
-b.get('/:board_id', (req, res, next) => {
-  Board.findAll({
-    where: {
-      id: req.params.board_id,
-    },
+b.get('/:BoardId', (req, res, next) => {
+  Board.findById(req.params.BoardId, {
     include: [
       {
-        model: List,
-        include: [
-          {
-            model: Card,
-          },
-        ],
+        association: Board.List,
+        include: [List.Card],
       },
     ],
   })
-    .then(([{ dataValues }]) => {
+    .then(({ dataValues }) => {
       if (dataValues.UserId !== req.user.id) {
         res.status(403).end()
       } else {
@@ -57,6 +62,6 @@ b.get('/:board_id', (req, res, next) => {
     .catch(next)
 })
 
-b.use('/:board_id/list', list)
+b.use('/:BoardId/list', list)
 
 export default b

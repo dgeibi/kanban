@@ -13,11 +13,14 @@ export default function(sequelize) {
       type: Sequelize.STRING(255),
       allowNull: false,
     },
-    index: Sequelize.TINYINT,
+    index: {
+      type: Sequelize.TINYINT,
+      allowNull: false,
+    },
   })
   List.associate = models => {
-    models.List.hasMany(models.Card)
-    models.List.belongsTo(models.Board, {
+    List.Card = models.List.hasMany(models.Card)
+    List.Board = models.List.belongsTo(models.Board, {
       onDelete: 'CASCADE',
       foreignKey: {
         allowNull: false,
