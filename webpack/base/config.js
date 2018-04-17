@@ -1,8 +1,8 @@
-const { define } = require('./util')
-const resolveConfig = require('./resolve.config')
-const Env = require('./Env')
+const resolveConfig = require('../parts/resolve.part')
+const paths = require('../paths')
 
-module.exports = ({ SERVER, PROD }) => {
+module.exports = ({ SERVER, NODE_ENV }) => {
+  const PROD = NODE_ENV === 'production'
   const babelReactPreset = ['dgeibi-react']
   if (SERVER) {
     babelReactPreset.push({
@@ -11,17 +11,14 @@ module.exports = ({ SERVER, PROD }) => {
       },
     })
   }
-  Env.definitions['process.env.SERVER'] = SERVER
-
   return {
     ...resolveConfig,
-    plugins: [define(Env.definitions)],
     module: {
       rules: [
         {
           test: /\.js$/,
           loader: 'babel-loader',
-          include: Env.src,
+          include: paths.src,
           options: {
             babelrc: false,
             cacheDirectory: true,

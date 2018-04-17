@@ -2,7 +2,7 @@ import * as ErrorCodes from '~/ErrorCodes'
 import { Router } from 'express'
 import Schema from 'async-validator'
 import models from '../models'
-import hashPw from '../utils/hashPw'
+import hashPw from '../security/hashPw'
 
 const { User } = models
 

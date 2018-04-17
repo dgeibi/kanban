@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import webpack from 'webpack'
 import path from 'path'
 import webpackDevMiddleware from 'webpack-dev-middleware'

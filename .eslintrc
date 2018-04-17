@@ -3,7 +3,7 @@
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": "./webpack/resolve.config.js"
+        "config": "./webpack/parts/resolve.part.js"
       }
     }
   }

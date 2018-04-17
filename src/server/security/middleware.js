@@ -6,7 +6,7 @@ import './initPassport'
 
 export default [
   session({
-    secret: process.env.SESSION_KEY || 'cat_sjjsj',
+    secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: true,
   }),

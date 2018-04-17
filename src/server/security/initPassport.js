@@ -2,7 +2,7 @@ import passport from 'passport'
 import LocalStrategy from 'passport-local'
 
 import models from '../models'
-import hashPw from '../utils/hashPw'
+import hashPw from './hashPw'
 
 const { User } = models
 
