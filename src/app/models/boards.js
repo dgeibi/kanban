@@ -1,6 +1,6 @@
-import hot from 'dva-hot'
+import { model } from 'dva-hot'
 
-export default hot.model(module)({
+export default model(module)({
   namespace: 'boards',
   state: {},
   reducers: {},

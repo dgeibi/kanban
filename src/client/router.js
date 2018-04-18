@@ -1,6 +1,6 @@
-import hot from 'dva-hot'
-import React from 'react'
+import { router } from 'dva-hot'
 import { routerRedux } from 'dva/router'
+import React from 'react'
 import Root from '../app/Root'
 
 const { ConnectedRouter } = routerRedux
@@ -13,4 +13,4 @@ function RouterConfig({ history }) {
   )
 }
 
-export default hot.router(module)(RouterConfig)
+export default router(module)(RouterConfig)

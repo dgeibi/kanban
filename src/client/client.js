@@ -1,6 +1,6 @@
 import { createElement } from 'react'
 import { hydrate } from 'react-dom'
-import hot from 'dva-hot'
+import { setContainer } from 'dva-hot'
 import { createBrowserHistory } from 'history'
 
 import router from './router'
@@ -17,4 +17,4 @@ const app = createApp({
   history: createBrowserHistory(),
 })
 
-hydrate(createElement(app.start()), hot.setContainer('#root'))
+hydrate(createElement(app.start()), setContainer('#root'))

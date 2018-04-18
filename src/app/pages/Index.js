@@ -4,7 +4,7 @@ import { Link } from 'dva/router'
 
 function Index({ user, dispatch }) {
   return (
-    <React.Fragment>
+    <>
       Welcome!
       <div>{JSON.stringify(user)}</div>
       {user.logined ? (
@@ -28,7 +28,7 @@ function Index({ user, dispatch }) {
           </div>
         </>
       )}
-    </React.Fragment>
+    </>
   )
 }
 

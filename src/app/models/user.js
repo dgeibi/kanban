@@ -1,7 +1,7 @@
-import hot from 'dva-hot'
+import { model } from 'dva-hot'
 import logout from '../services/logout'
 
-export default hot.model(module)({
+export default model(module)({
   namespace: 'user',
   state: {
     logined: false,
