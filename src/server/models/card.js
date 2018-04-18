@@ -16,7 +16,7 @@ export default function(sequelize) {
     text: Sequelize.TEXT,
   })
   Card.associate = models => {
-    Card.List = models.Card.belongsTo(models.List, {
+    models.Card.belongsTo(models.List, {
       onDelete: 'CASCADE',
       foreignKey: {
         allowNull: false,

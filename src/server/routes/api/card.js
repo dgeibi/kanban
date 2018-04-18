@@ -2,32 +2,31 @@ import { Router } from 'express'
 import models from '~/server/models'
 import autoCatch from 'express-async-handler'
 
-/* merge req.params.BoardId, ListId */
-const c = Router({ mergeParams: true })
+const c = Router()
 
 const { Card } = models
 
 c.post(
   '/create',
   autoCatch(async (req, res) => {
-    const { ListId } = req.params
     const { text, index, id } = req.body
     await Card.create({
       text,
       index,
       id,
-      ListId,
+      ListId: req.list.id,
     })
     res.end()
   })
 )
 
 c.delete(
-  '/:CardId/destroy',
+  '/:cardId/destroy',
   autoCatch(async (req, res) => {
     await Card.destroy({
       where: {
-        id: req.params.CardId,
+        id: req.params.cardId,
+        ListId: req.list.id,
       },
     })
     res.end()

@@ -1,7 +1,8 @@
 export const development = {
   dialect: "sqlite",
-  storage: "./db.development.sqlite",
-  logging: false,
+  // storage: "./db.development.sqlite",
+  storage: ":memory:",  
+  // logging: true,
 };
 export const test = {
   dialect: "sqlite",

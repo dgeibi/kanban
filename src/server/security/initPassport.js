@@ -14,8 +14,8 @@ passport.deserializeUser((id, done) => {
   User.findById(id, {
     attributes: ['id', 'username', 'email'],
   })
-    .then(({ dataValues }) => {
-      done(null, dataValues)
+    .then(user => {
+      done(null, user)
     })
     .catch(done)
 })
@@ -26,7 +26,7 @@ passport.use(
       usernameField: 'email',
       passwordField: 'password',
     },
-    (email, password, cb) => {
+    (email, password, done) => {
       User.findOne({
         where: {
           email,
@@ -34,12 +34,12 @@ passport.use(
       })
         .then(user => {
           if (user.password === hashPw(password)) {
-            cb(null, user)
+            done(null, user)
           } else {
-            cb(null, false)
+            done(null, false)
           }
         })
-        .catch(cb)
+        .catch(done)
     }
   )
 )

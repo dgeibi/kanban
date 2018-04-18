@@ -1,33 +1,22 @@
 import { Router } from 'express'
 import autoCatch from 'express-async-handler'
 import models from '~/server/models'
-import trulyArray from '~/utils/trulyArray'
+import pick from '~/utils/pick'
 import card from './card'
 
-/* merge req.params.BoardId */
-const r = Router({ mergeParams: true })
+const r = Router()
 
-const { List } = models
+const { List, Card } = models
 
 r.post(
   '/create',
   autoCatch(async (req, res) => {
-    const { id, index, title, Cards } = req.body
     await List.create(
+      Object.assign(pick(req.body, ['id', 'index', 'title', 'Cards']), {
+        BoardId: req.board.id,
+      }),
       {
-        id,
-        title,
-        Cards,
-        index,
-        BoardId: req.params.BoardId,
-      },
-      {
-        include: trulyArray([
-          List.Board,
-          Cards && {
-            association: List.Card,
-          },
-        ]),
+        include: [Card],
       }
     )
     res.end()
@@ -35,31 +24,44 @@ r.post(
 )
 
 r.get(
-  '/:ListId',
+  '/:listId',
   autoCatch(async (req, res) => {
-    const list = await List.findById(req.params.ListId, {
-      include: [
-        {
-          association: List.Card,
-        },
-      ],
+    const list = await List.findOne({
+      where: {
+        id: req.params.listId,
+        BoardId: req.board.id,
+      },
+      include: [Card],
+      order: [[Card, 'index']],
     })
     res.json(list.dataValues)
   })
 )
 
 r.delete(
-  '/:ListId/destroy',
+  '/:listId/destroy',
   autoCatch(async (req, res) => {
     await List.destroy({
       where: {
-        id: req.params.ListId,
+        id: req.params.listId,
+        BoardId: req.board.id,
       },
     })
     res.end()
   })
 )
 
-r.use('/:ListId/card', card)
+const authList = autoCatch(async (req, res, next) => {
+  const list = await List.findById(req.params.listId)
+  const has = await req.board.hasList(list)
+  if (!has) {
+    res.status(403).end()
+  } else {
+    req.list = list
+    next()
+  }
+})
+
+r.use('/:listId/card', authList, card)
 
 export default r
