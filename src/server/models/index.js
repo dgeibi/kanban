@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize'
-
+import { capitalize } from 'lodash'
 import * as configSet from '../config/db'
 
 const env = process.env.NODE_ENV || 'development'
@@ -13,15 +13,17 @@ const sequelize = config.use_env_variable
 
 const r = require.context('./', false, /^\.\/(?!index).*\.js$/)
 
+const format = capitalize
+
 r.keys().forEach(key => {
   const x = r(key).default
   const model = x(sequelize)
-  db[model.name] = model
+  db[format(model.name)] = model
 })
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db)
+Object.keys(db).forEach(key => {
+  if (db[key].associate) {
+    db[key].associate(db)
   }
 })
 

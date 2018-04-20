@@ -13,8 +13,8 @@ b.post(
   '/create',
   autoCatch(async (req, res) => {
     await Board.create(
-      Object.assign(pick(req.body, ['id', 'title', 'Lists']), {
-        UserId: req.user.id,
+      Object.assign(pick(req.body, ['id', 'title', 'lists']), {
+        userId: req.user.id,
       }),
       {
         include: [
@@ -35,7 +35,7 @@ b.delete(
     await Board.destroy({
       where: {
         id: req.params.boardId,
-        UserId: req.user.id,
+        userId: req.user.id,
       },
     })
     res.end()
@@ -48,7 +48,7 @@ b.get(
     const board = await Board.findOne({
       where: {
         id: req.params.boardId,
-        UserId: req.user.id,
+        userId: req.user.id,
       },
       include: [
         {

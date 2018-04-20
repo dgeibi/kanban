@@ -14,7 +14,7 @@ c.post(
       text,
       index,
       id,
-      ListId: req.list.id,
+      listId: req.list.id,
     })
     res.end()
   })
@@ -26,7 +26,7 @@ c.delete(
     await Card.destroy({
       where: {
         id: req.params.cardId,
-        ListId: req.list.id,
+        listId: req.list.id,
       },
     })
     res.end()

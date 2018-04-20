@@ -4,7 +4,7 @@ import Sequelize from 'sequelize'
  * @param {Sequelize.Sequelize} sequelize
  */
 export default function(sequelize) {
-  const List = sequelize.define('List', {
+  const List = sequelize.define('list', {
     id: {
       primaryKey: true,
       type: Sequelize.CHAR(21),

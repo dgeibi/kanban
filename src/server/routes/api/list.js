@@ -12,8 +12,8 @@ r.post(
   '/create',
   autoCatch(async (req, res) => {
     await List.create(
-      Object.assign(pick(req.body, ['id', 'index', 'title', 'Cards']), {
-        BoardId: req.board.id,
+      Object.assign(pick(req.body, ['id', 'index', 'title', 'cards']), {
+        boardId: req.board.id,
       }),
       {
         include: [Card],
@@ -29,7 +29,7 @@ r.get(
     const list = await List.findOne({
       where: {
         id: req.params.listId,
-        BoardId: req.board.id,
+        boardId: req.board.id,
       },
       include: [Card],
       order: [[Card, 'index']],
@@ -44,7 +44,7 @@ r.delete(
     await List.destroy({
       where: {
         id: req.params.listId,
-        BoardId: req.board.id,
+        boardId: req.board.id,
       },
     })
     res.end()

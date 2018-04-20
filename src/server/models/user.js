@@ -4,7 +4,7 @@ import Sequelize from 'sequelize'
  * @param {Sequelize.Sequelize} sequelize
  */
 export default function(sequelize) {
-  const User = sequelize.define('User', {
+  const User = sequelize.define('user', {
     id: {
       primaryKey: true,
       type: Sequelize.CHAR(21),
