@@ -1,35 +1,10 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Link } from 'dva/router'
+import { map } from 'lodash'
+import { Card } from 'antd'
 
-function Index({ user, dispatch }) {
-  return (
-    <>
-      Welcome!
-      <div>{JSON.stringify(user)}</div>
-      {user.logined ? (
-        <div>
-          <button
-            type="button"
-            onClick={() => {
-              dispatch({ type: 'user/logout' })
-            }}
-          >
-            退出
-          </button>
-        </div>
-      ) : (
-        <>
-          <div>
-            <Link to="/login">login</Link>
-          </div>
-          <div>
-            <Link to="/join">join</Link>
-          </div>
-        </>
-      )}
-    </>
-  )
+function Index({ boards }) {
+  return map(boards, board => <Card title={board.title} key={board.id} />)
 }
 
-export default connect(({ user }) => ({ user }))(Index)
+export default connect(({ boards }) => ({ boards }))(Index)

@@ -1,5 +1,5 @@
 import fetch from 'unfetch'
-import * as ErrorCodes from '~/ErrorCodes'
+// import * as ErrorCodes from '~/ErrorCodes'
 
 let csrfToken
 
@@ -12,37 +12,33 @@ function isJSON(res) {
   return ret && ret.indexOf('json') > 0
 }
 
-function handleResolved(response) {
-  const { ok, status } = response
-  const result = {
-    ok,
-    status,
-    error: ok ? null : Error(response.statusText),
-    code: ok ? undefined : ErrorCodes.CLIENT_UNKNOWN,
-  }
+function takeJSON(response) {
   if (isJSON(response)) {
-    return response
-      .json()
-      .then(data => Object.assign(result, data))
-      .catch(() => result)
+    return response.json()
   }
-  return result
+  return response.text()
 }
 
-function handleRejectd(error) {
-  return {
-    ok: false,
-    error,
-    code: ErrorCodes.CLIENT_UNKNOWN,
-  }
+function checkResponse(response) {
+  if (response.ok) return takeJSON(response)
+  const error = new Error(response.statusText)
+  error.response = response
+  throw error
 }
 
-function logErr(result) {
-  if (!result.ok) {
-    // console.error(result.error)
-  }
-  return result
-}
+// function handleRejectd(error) {
+//   return {
+//     ok: false,
+//     error,
+//     code: ErrorCodes.CLIENT_UNKNOWN,
+//   }
+// }
+
+// function logErr(error) {
+//   // console
+//   console.log
+//   throw error
+// }
 
 /**
  * Requests a URL, returning a promise.
@@ -60,9 +56,7 @@ function request(url, options = {}) {
     },
     credentials: 'same-origin',
     ...options,
-  })
-    .then(handleResolved, handleRejectd)
-    .then(logErr)
+  }).then(checkResponse)
 }
 
 export default request

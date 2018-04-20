@@ -1,10 +1,9 @@
 import React from 'react'
 import { connect } from 'dva'
 import { Redirect } from 'dva/router'
-import request from '../utils/request'
 
-function Join({ user, history, dispatch }) {
-  if (user.logined) {
+function Join({ user, dispatch }) {
+  if (user) {
     return <Redirect to="/" />
   }
   return (
@@ -22,29 +21,20 @@ function Join({ user, history, dispatch }) {
             data[x.name] = x.value
           }
         })
-        request('/join', {
-          method: 'POST',
-          body: JSON.stringify(data),
-        }).then(result => {
-          if (result.ok) {
-            dispatch({
-              type: 'user/logined',
-              info: {
-                username: data.username,
-                email: data.email,
-              },
-            })
-            history.push('/')
-          } else {
-            // notify
-          }
+        dispatch({
+          type: 'user/join',
+          payload: data,
         })
-        return false
       }}
     >
-      <input name="email" placeholder="email" />
-      <input name="username" placeholder="username" />
-      <input name="password" type="password" placeholder="password" />
+      <input name="email" placeholder="email" autoComplete="true" />
+      <input name="username" placeholder="username" autoComplete="true" />
+      <input
+        name="password"
+        type="password"
+        placeholder="password"
+        autoComplete="true"
+      />
       <button>提交</button>
     </form>
   )

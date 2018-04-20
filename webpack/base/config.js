@@ -1,63 +1,6 @@
 const resolveConfig = require('../parts/resolve.part')
-const paths = require('../paths')
+const css = require('../parts/css.part')
+const js = require('../parts/js.part')
+const merge = require('../utils/merge')
 
-module.exports = ({ SERVER, NODE_ENV }) => {
-  const PROD = NODE_ENV === 'production'
-  const babelReactPreset = ['dgeibi-react']
-  if (SERVER) {
-    babelReactPreset.push({
-      targets: {
-        node: 'current',
-      },
-    })
-  }
-  return {
-    ...resolveConfig,
-    module: {
-      rules: [
-        {
-          oneOf: [
-            {
-              test: /\.js$/,
-              include: paths.src,
-              use: [
-                'thread-loader',
-                {
-                  loader: 'babel-loader',
-                  options: {
-                    babelrc: false,
-                    cacheDirectory: true,
-                    presets: [babelReactPreset],
-                    plugins: [['emotion', { sourceMap: !PROD }], 'lodash'],
-                  },
-                },
-              ],
-            },
-            {
-              test: /\.js$/,
-              use: [
-                'thread-loader',
-                {
-                  loader: 'babel-loader',
-                  options: {
-                    babelrc: false,
-                    cacheDirectory: true,
-                    presets: [
-                      [
-                        '@babel/preset-env',
-                        {
-                          modules: false,
-                          shippedProposals: true,
-                        },
-                      ],
-                    ],
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  }
-}
+module.exports = env => merge.sync([resolveConfig, css, js], env)
