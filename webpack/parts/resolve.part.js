@@ -4,6 +4,7 @@ module.exports = {
   resolve: {
     alias: {
       '~': paths.src,
+      'lodash-es': 'lodash',
     },
   },
 }

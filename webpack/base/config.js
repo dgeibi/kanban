@@ -16,15 +16,46 @@ module.exports = ({ SERVER, NODE_ENV }) => {
     module: {
       rules: [
         {
-          test: /\.js$/,
-          loader: 'babel-loader',
-          include: paths.src,
-          options: {
-            babelrc: false,
-            cacheDirectory: true,
-            presets: [babelReactPreset],
-            plugins: [['emotion', { sourceMap: !PROD }]],
-          },
+          oneOf: [
+            {
+              test: /\.js$/,
+              include: paths.src,
+              use: [
+                'thread-loader',
+                {
+                  loader: 'babel-loader',
+                  options: {
+                    babelrc: false,
+                    cacheDirectory: true,
+                    presets: [babelReactPreset],
+                    plugins: [['emotion', { sourceMap: !PROD }], 'lodash'],
+                  },
+                },
+              ],
+            },
+            {
+              test: /\.js$/,
+              use: [
+                'thread-loader',
+                {
+                  loader: 'babel-loader',
+                  options: {
+                    babelrc: false,
+                    cacheDirectory: true,
+                    presets: [
+                      [
+                        '@babel/preset-env',
+                        {
+                          modules: false,
+                          shippedProposals: true,
+                        },
+                      ],
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
     },
