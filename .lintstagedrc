@@ -1,0 +1,5 @@
+{
+  "*.js": ["prettier --write", "eslint", "git add"],
+  "*.{css,md}": ["prettier --write", "git add"],
+  ".*rc": ["prettier --write --parser json", "git add"]
+}

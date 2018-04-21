@@ -25,7 +25,7 @@ export default function(sequelize) {
       type: Sequelize.CHAR(64),
       set(val) {
         this.setDataValue('password', hashPw(val))
-      }
+      },
     },
     email: {
       type: Sequelize.STRING(255),

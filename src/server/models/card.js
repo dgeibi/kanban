@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize'
 
 /**
- * @param {Sequelize.Sequelize} sequelize 
+ * @param {Sequelize.Sequelize} sequelize
  */
 export default function(sequelize) {
   const Card = sequelize.define('card', {
@@ -19,7 +19,7 @@ export default function(sequelize) {
     },
     date: {
       type: Sequelize.DATEONLY,
-    }
+    },
   })
   Card.associate = models => {
     models.Card.belongsTo(models.List, {

@@ -39,7 +39,11 @@ module.exports = ({ SERVER, NODE_ENV }) => {
                     babelrc: false,
                     cacheDirectory: true,
                     presets: [babelReactPreset],
-                    plugins: [['emotion', { sourceMap: !PROD }], 'lodash', importAntd],
+                    plugins: [
+                      ['emotion', { sourceMap: !PROD }],
+                      'lodash',
+                      importAntd,
+                    ],
                   },
                 },
               ],
