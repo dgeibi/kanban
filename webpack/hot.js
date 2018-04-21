@@ -8,16 +8,19 @@ const config = new ConfigBuilder({
   hot: true,
 }).toConfigSync()
 
-const firstBuild = new Promise(resolve => {
-  config.plugins.push(function notifyDone() {
-    this.hooks.done.tap('my-done', resolve)
+let first = false
+const exec = () => {
+  first = true
+  execa('node', ['./dist/server.js'], {
+    stdio: 'inherit',
   })
-})
+}
+
 config.entry.unshift('webpack/hot/poll.js?1000')
+
 const compiler = webpack(config)
 compiler.watch(
   {
-    // Example watchOptions
     aggregateTimeout: 300,
     poll: 1000,
   },
@@ -27,11 +30,8 @@ compiler.watch(
         colors: true,
       })
     )
+    if (!first && !stats.hasErrors()) {
+      exec()
+    }
   }
 )
-
-firstBuild.then(() => {
-  execa('node', ['./dist/server.js'], {
-    stdio: 'inherit',
-  })
-})
