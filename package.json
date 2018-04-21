@@ -8,7 +8,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "stage": "npm run -s build -- -s",
     "build": "node ./webpack/build.js",
-    "build:prod": "npm run -s build -- -s --mode production",
+    "build:prod": "cross-env NODE_ENV=production npm run -s build",
     "format": "prettier --write \"src/**/*.js\" --ignore-path .gitignore"
   },
   "author": "dgeibi",

@@ -1,29 +1,30 @@
-const css = ({ NODE_ENV, SERVER }) => {
+const css = ({ NODE_ENV, SERVER, HOT_MODE }) => {
+  const EXTRACT = !SERVER && !HOT_MODE
+  let resourceLoader = null
+  const plugins = []
+
+  if (EXTRACT) {
+    const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+    resourceLoader = MiniCssExtractPlugin.loader
+    plugins.push(new MiniCssExtractPlugin())
+  } else if (!SERVER) {
+    resourceLoader = 'style-loader'
+  }
+
+  const cssLoader = SERVER ? 'css-loader/locals' : 'css-loader'
   const PROD = NODE_ENV === 'production'
-  
-  const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
-  const CSS_LOADER = SERVER ? 'css-loader/locals' : 'css-loader'
-  let CSS_RES_LOADER = null
-  if (!SERVER) {
-    CSS_RES_LOADER = PROD ? MiniCssExtractPlugin.loader : 'style-loader'
-  }
-
   const sourceMap = !PROD
-  const Opts = {
-    css: {
-      minimize: PROD,
-      sourceMap,
-    },
-  }
 
   const rules = [
     {
       test: /\.css$/,
       use: [
         {
-          loader: CSS_LOADER,
-          options: Opts.css,
+          loader: cssLoader,
+          options: {
+            minimize: PROD,
+            sourceMap,
+          },
         },
         {
           loader: 'postcss-loader',
@@ -34,21 +35,17 @@ const css = ({ NODE_ENV, SERVER }) => {
       ],
     },
   ]
-  if (CSS_RES_LOADER) {
+  if (resourceLoader) {
     rules.forEach(rule => {
-      rule.use.unshift(CSS_RES_LOADER)
+      rule.use.unshift(resourceLoader)
     })
   }
-
-  const parts = {
+  return {
     module: {
       rules,
     },
+    plugins,
   }
-  if (!SERVER && PROD) {
-    parts.plugins = [new MiniCssExtractPlugin()]
-  }
-  return parts
 }
 
 module.exports = css

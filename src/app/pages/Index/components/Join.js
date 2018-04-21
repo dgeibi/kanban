@@ -45,32 +45,30 @@ class Join extends Component {
       <Form onSubmit={this.handleSubmit}>
         <FormItem label="邮件地址">
           {getFieldDecorator('email', {
-            rules: [validation.email],
-          })(<Input type="email" autoComplete="on" />)}
+            rules: validation.email,
+          })(<Input type="email" autoComplete="email" />)}
         </FormItem>
         <FormItem label="用户名">
           {getFieldDecorator('username', {
-            rules: [validation.username],
+            rules: validation.username,
           })(<Input autoComplete="on" />)}
         </FormItem>
         <FormItem label="密码">
           {getFieldDecorator('password', {
-            rules: [
-              validation.password,
+            rules: validation.password.concat([
               {
                 validator: this.validateToNextPassword,
               },
-            ],
+            ]),
           })(<Input type="password" autoComplete="on" />)}
         </FormItem>
         <FormItem label="重复密码">
           {getFieldDecorator('confirm', {
-            rules: [
-              validation.password,
+            rules: validation.password.concat([
               {
                 validator: this.compareToFirstPassword,
               },
-            ],
+            ]),
           })(
             <Input
               type="password"

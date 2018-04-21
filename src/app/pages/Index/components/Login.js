@@ -20,12 +20,12 @@ class Login extends Component {
       <Form onSubmit={this.handleSubmit}>
         <FormItem label="用户名或邮件地址">
           {getFieldDecorator('emailOrUsername', {
-            rules: [validation.emailOrUsername],
+            rules: validation.emailOrUsername,
           })(<Input autoComplete="on" />)}
         </FormItem>
         <FormItem label="密码">
           {getFieldDecorator('password', {
-            rules: [validation.password],
+            rules: validation.password,
           })(<Input type="password" autoComplete="on" />)}
         </FormItem>
         <FormItem>

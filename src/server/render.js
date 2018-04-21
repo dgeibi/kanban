@@ -43,22 +43,24 @@ export default function render(req, res) {
   })
   const appHTML = renderToString(createElement(app.start()))
   const helmet = Helmet.renderStatic()
-  const preloadedState = app._store.getState()
-  const html = `<!DOCTYPE html>
+  const preloadData = JSON.stringify({
+    state: app._store.getState(),
+    token: req.csrfToken(),
+  })
+
+  const htmlString = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Page Title</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="${manifest['main.css']}">
   ${helmet.title.toString()}
 </head>
 <body><div id="root">${appHTML}</div></body>
-<script id="preload">window.GET_PRELOAD = function () {document.getElementById('preload').textContent='';delete window.GET_PRELOAD;return {token: "${req.csrfToken()}",state: ${JSON.stringify(
-    preloadedState
-  )}}}</script>
-<script src=${manifest['main.js']}></script>
+<script>window.__PRELOAD__ = ${preloadData}</script>
+<script src="${manifest['main.js']}"></script>
 </html>
 `
-  res.status(context.status || 200).send(html)
+  res.status(context.status || 200).send(htmlString)
 }

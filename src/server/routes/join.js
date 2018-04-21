@@ -36,7 +36,8 @@ const login = autoCatch(async (req, res, next) => {
     if (e) {
       next(e)
     } else {
-      res.status(204).end()
+      const { username, email } = user
+      res.json({ username, email })
     }
   })
 })
