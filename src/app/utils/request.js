@@ -1,5 +1,4 @@
 import fetch from 'unfetch'
-// import * as ErrorCodes from '~/ErrorCodes'
 
 let csrfToken
 
@@ -16,7 +15,7 @@ function takeJSON(response) {
   if (isJSON(response)) {
     return response.json()
   }
-  return response.text()
+  return { response }
 }
 
 function checkResponse(response) {
@@ -26,36 +25,29 @@ function checkResponse(response) {
   throw error
 }
 
-// function handleRejectd(error) {
-//   return {
-//     ok: false,
-//     error,
-//     code: ErrorCodes.CLIENT_UNKNOWN,
-//   }
-// }
-
-// function logErr(error) {
-//   // console
-//   console.log
-//   throw error
-// }
-
 /**
  * Requests a URL, returning a promise.
  *
  * @param  {string} url       The URL we want to request
  * @param  {object} [options] The options we want to pass to "fetch"
- * @return {object}
+ * @return {Promise<object>}
  */
-function request(url, options = {}) {
+function request(url, options) {
+  options = options || {}
+  const headers = {
+    'CSRF-Token': csrfToken,
+  }
+  if (typeof options.body === 'string') {
+    headers['Content-Type'] = 'application/json'
+  }
+  if (options.headers) {
+    Object.assign(headers, options.headers)
+  }
+
   return fetch(url, {
-    headers: {
-      'CSRF-Token': csrfToken,
-      'content-type': 'application/json',
-      ...options.headers,
-    },
     credentials: 'same-origin',
     ...options,
+    headers,
   }).then(checkResponse)
 }
 
