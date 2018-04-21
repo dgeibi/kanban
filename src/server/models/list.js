@@ -10,7 +10,7 @@ export default function(sequelize) {
       type: Sequelize.CHAR(21),
     },
     title: {
-      type: Sequelize.STRING(255),
+      type: Sequelize.TEXT,
       allowNull: false,
     },
     index: {

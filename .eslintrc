@@ -1,5 +1,8 @@
 {
   "extends": "dgeibi/react",
+  "rules": {
+    "no-param-reassign": "off"
+  },
   "settings": {
     "import/resolver": {
       "webpack": {

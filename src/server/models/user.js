@@ -1,4 +1,7 @@
 import Sequelize from 'sequelize'
+import normalizeEmail from 'validator/lib/normalizeEmail'
+import nanoid from 'nanoid'
+import hashPw from '../security/hashPw'
 
 /**
  * @param {Sequelize.Sequelize} sequelize
@@ -8,18 +11,29 @@ export default function(sequelize) {
     id: {
       primaryKey: true,
       type: Sequelize.CHAR(21),
+      defaultValue() {
+        return nanoid()
+      },
     },
     username: {
       allowNull: false,
-      type: Sequelize.STRING(255),
+      type: Sequelize.STRING(50),
+      unique: true,
     },
     password: {
       allowNull: false,
       type: Sequelize.CHAR(64),
+      set(val) {
+        this.setDataValue('password', hashPw(val))
+      }
     },
     email: {
-      type: Sequelize.STRING(50),
+      type: Sequelize.STRING(255),
+      allowNull: false,
       unique: true,
+      set(val) {
+        this.setDataValue('email', normalizeEmail(val))
+      },
     },
   })
   User.associate = models => {

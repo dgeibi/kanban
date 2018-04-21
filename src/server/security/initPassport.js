@@ -1,6 +1,9 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
 
+import isEmail from 'validator/lib/isEmail'
+import normalizeEmail from 'validator/lib/normalizeEmail'
+
 import models from '../models'
 import hashPw from './hashPw'
 
@@ -20,18 +23,30 @@ passport.deserializeUser((id, done) => {
     .catch(done)
 })
 
+const findByEmailOrUsername = emailOrUsername => {
+  if (isEmail(emailOrUsername)) {
+    return User.findOne({
+      where: {
+        email: normalizeEmail(emailOrUsername),
+      },
+    })
+  } else {
+    return User.findOne({
+      where: {
+        username: emailOrUsername,
+      },
+    })
+  }
+}
+
 passport.use(
   new LocalStrategy(
     {
-      usernameField: 'email',
+      usernameField: 'emailOrUsername',
       passwordField: 'password',
     },
-    (email, password, done) => {
-      User.findOne({
-        where: {
-          email,
-        },
-      })
+    (emailOrUsername, password, done) => {
+      findByEmailOrUsername(emailOrUsername)
         .then(user => {
           if (user.password === hashPw(password)) {
             done(null, user)

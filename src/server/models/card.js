@@ -14,6 +14,12 @@ export default function(sequelize) {
       allowNull: false,
     },
     text: Sequelize.TEXT,
+    color: {
+      type: Sequelize.STRING(20),
+    },
+    date: {
+      type: Sequelize.DATEONLY,
+    }
   })
   Card.associate = models => {
     models.Card.belongsTo(models.List, {

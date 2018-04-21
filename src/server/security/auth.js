@@ -1,11 +1,15 @@
-import * as ErrorCodes from '~/ErrorCodes'
-
-const auth = (req, res, next) => {
-  if (!req.isAuthenticated()) {
-    res.status(401).json({ ok: false, code: ErrorCodes.UNAUTHORIZED })
+export const auenticated = (req, res, next) => {
+  if (!req.isAuthenticated1()) {
+    res.status(401).end()
   } else {
     next()
   }
 }
 
-export default auth
+export const unauenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.status(401).end()
+  } else {
+    next()
+  }
+}

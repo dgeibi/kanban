@@ -1,5 +1,6 @@
 import webpack from 'webpack'
 import path from 'path'
+import { get } from 'lodash'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 
@@ -32,26 +33,43 @@ const historyApi = ({ compiler, filename }) =>
     })
   }
 
-export default async function ({ config, historyApiFallback }) {
-  const webpackConfig = await normalizeConfig(config);
-  webpackConfig.plugins = webpackConfig.plugins || [];
-  const firstBuildDone = new Promise(resolve => {
-    webpackConfig.plugins.push(function buildDone() {
-      this.hooks.done.tap('firstBuildDone', resolve);
-    });
-  });
-  const compiler = webpack(webpackConfig);
-  const middleware = [
-    webpackDevMiddleware(compiler, {
-      publicPath: '/',
-    }),
-    webpackHotMiddleware(compiler),
-  ];
-  if (historyApiFallback) {
-    middleware.push(historyApi({ compiler }));
+const skip = match => x => (req, res, next) => {
+  if (match(req)) {
+    x(req, res, next)
+  } else {
+    next()
   }
-  await firstBuildDone;
-  global.mfs = compiler.outputFileSystem;
-  console.log('client build done!！');
-  return middleware;
+}
+
+export default async function({
+  config,
+  historyApiFallback,
+  publicPath,
+  hot = {},
+}) {
+  let middlewares = get(module, ['hot', 'data', 'middlewares'])
+  if (middlewares) return middlewares
+
+  const webpackConfig = await normalizeConfig(config)
+  webpackConfig.plugins = webpackConfig.plugins || []
+  const compiler = webpack(webpackConfig)
+  const devMiddleware = webpackDevMiddleware(compiler, {
+    publicPath,
+  })
+  const hotMiddleware = webpackHotMiddleware(compiler, hot)
+  middlewares = [devMiddleware, hotMiddleware]
+  if (historyApiFallback) {
+    middlewares.push(historyApi({ compiler }))
+  }
+  middlewares = publicPath
+    ? middlewares.map(skip(req => req.url.indexOf(publicPath) === 0))
+    : middlewares
+  if (module.hot) {
+    module.hot.dispose(data => {
+      /* save middlewares */
+      data.middlewares = middlewares
+    })
+  }
+  global.mfs = compiler.outputFileSystem
+  return middlewares
 }

@@ -1,44 +1,46 @@
-import * as ErrorCodes from '~/ErrorCodes'
 import { Router } from 'express'
 import Schema from 'async-validator'
-import nanoid from 'nanoid'
+import autoCatch from 'express-async-handler'
+
+import * as validateRules from '~/app/validation/auth'
+import { unauenticated } from '../security/auth'
 
 import models from '../models'
-import hashPw from '../security/hashPw'
 
 const { User } = models
 
 const router = Router()
 
 const validator = new Schema({
-  username: { type: 'string', required: true, min: 1 },
-  password: { type: 'string', required: true, min: 6 },
-  email: { type: 'email', required: true },
+  username: validateRules.username,
+  email: validateRules.email,
+  password: validateRules.password,
 })
 
-router.post('/', (req, res, next) => {
-  if (req.isAuthenticated()) {
-    res.status(400).json({ ok: false, code: ErrorCodes.LOGINED })
-    return
-  }
+const inputValidate = (req, res, next) => {
   const { username, password, email } = req.body
-  validator.validate({ username, password, email }, errors => {
+  const userInput = { username, password, email }
+  validator.validate(userInput, errors => {
     if (errors && errors.length > 0) {
-      res.status(400).json({ ok: false, code: ErrorCodes.INVALID_INPUT })
+      res.status(400).end()
     } else {
-      User.create({ id: nanoid(), username, email, password: hashPw(password) })
-        .then(user => {
-          req.login(user, e => {
-            if (e) {
-              next(e)
-            } else {
-              res.json({ ok: true })
-            }
-          })
-        })
-        .catch(next)
+      req.userInput = userInput
+      next()
+    }
+  })
+}
+
+const login = autoCatch(async (req, res, next) => {
+  const user = await User.create(req.userInput)
+  req.login(user, e => {
+    if (e) {
+      next(e)
+    } else {
+      res.status(204).end()
     }
   })
 })
+
+router.post('/', unauenticated, inputValidate, login)
 
 export default router

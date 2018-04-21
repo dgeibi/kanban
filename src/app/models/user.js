@@ -1,5 +1,4 @@
 import { model } from 'dva-hot'
-import { routerRedux } from 'dva/router'
 import { logout, join, login } from '../services/user'
 
 export default model(module)({
@@ -13,23 +12,21 @@ export default model(module)({
   effects: {
     *logout(action, { call }) {
       yield call(logout)
-      window.location.pathname = '/login'
+      window.location.pathname = '/'
     },
     *join({ payload: info }, { call, put }) {
-      yield call(join, info)
-      const { email, username } = info
+      const data = yield call(join, info)
       yield put({
         type: 'save',
-        payload: { email, username },
+        payload: data,
       })
     },
     *login({ payload: info }, { call, put }) {
-      const { email, username } = yield call(login, info)
+      const data = yield call(login, info)
       yield put({
         type: 'save',
-        payload: { email, username },
+        payload: data,
       })
-      yield put(routerRedux.push('/'))
-    }
+    },
   },
 })
