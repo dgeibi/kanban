@@ -31,6 +31,8 @@ window.__main__ = () => {
 
   Loadable.preloadReady().then(() => {
     const App = app.start()
-    hydrate(<App />, setContainer('#root'))
+    hydrate(<App />, setContainer('#root'), () => {
+      Loadable.preloadAll()
+    })
   })
 }
