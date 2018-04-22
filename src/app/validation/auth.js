@@ -13,7 +13,7 @@ export const username = [
   required,
   {
     type: 'string',
-    pattern: /^[a-zA-Z0-9_-]{3,30}$/,
+    pattern: usernamePattern,
     message: `${fields.username}必须只包含3到30位字母、数字、下划线、减号`,
   },
 ]
@@ -38,13 +38,14 @@ export const emailOrUsername = [
   {
     validator(rule, value, callback) {
       const errors = []
-      if (typeof value !== 'string') {
-        errors.push(Error('string'))
-      } else if (!isEmail(value) && !usernamePattern.test(value)) {
-        errors.push(Error('illegal'))
+      if (
+        typeof value === 'string' &&
+        !isEmail(value) &&
+        !usernamePattern.test(value)
+      ) {
+        errors.push(Error('你输入的不是电子邮箱地址也不是合法的用户名'))
       }
       callback(errors)
     },
-    message: '你输入的不是电子邮箱地址也不是合法的用户名',
   },
 ]
