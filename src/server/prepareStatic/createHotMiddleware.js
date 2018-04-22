@@ -1,6 +1,5 @@
 import webpack from 'webpack'
 import path from 'path'
-import { get } from 'lodash'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 
@@ -47,9 +46,6 @@ export default async function({
   publicPath,
   hot = {},
 }) {
-  let middlewares = get(module, ['hot', 'data', 'middlewares'])
-  if (middlewares) return middlewares
-
   const webpackConfig = await normalizeConfig(config)
   webpackConfig.plugins = webpackConfig.plugins || []
   const compiler = webpack(webpackConfig)
@@ -57,19 +53,13 @@ export default async function({
     publicPath,
   })
   const hotMiddleware = webpackHotMiddleware(compiler, hot)
-  middlewares = [devMiddleware, hotMiddleware]
+  let middlewares = [devMiddleware, hotMiddleware]
   if (historyApiFallback) {
     middlewares.push(historyApi({ compiler }))
   }
   middlewares = publicPath
     ? middlewares.map(skip(req => req.url.indexOf(publicPath) === 0))
     : middlewares
-  if (module.hot) {
-    module.hot.dispose(data => {
-      /* save middlewares */
-      data.middlewares = middlewares
-    })
-  }
   global.mfs = compiler.outputFileSystem
   return middlewares
 }

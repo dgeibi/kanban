@@ -43,11 +43,13 @@ const loadManifests = ({ outputPath }) => {
   }
 }
 
+const { outputPath } = require('~/../webpack/paths')
+
 export default function render(req, res) {
   const modules = []
   const context = {}
   const location = req.url
-  loadManifests({ outputPath: req.outputPath })
+  loadManifests({ outputPath })
 
   const app = createApp({
     history: createMemoryHistory({

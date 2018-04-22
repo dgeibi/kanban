@@ -1,24 +1,23 @@
 import { createServer } from 'http'
 import makeDebug from 'debug'
+import logger from 'morgan'
+import express from 'express'
 
 import db from './models'
 import appPromise from './app'
+import handleError from './handleError'
+import prepareStatic from './prepareStatic'
 
 const debug = makeDebug('server')
 
-/**
- * Normalize a port into a number, string, or false.
- */
 function normalizePort(val) {
   const port = parseInt(val, 10)
 
   if (Number.isNaN(port)) {
-    // named pipe
     return val
   }
 
   if (port >= 0) {
-    // port number
     return port
   }
 
@@ -27,18 +26,24 @@ function normalizePort(val) {
 
 const port = normalizePort(process.env.PORT || '3000')
 
-const enhanceApp = app => {
-  app.set('port', port)
-}
+const app = express()
+app.set('port', port)
 
 let server
-let lastApp
+let appRouter
 
-appPromise.then(app => {
-  lastApp = app
-  enhanceApp(app)
-  server = createServer(app)
-  db.sequelize.sync().then(() => {
+Promise.all([prepareStatic(), appPromise, db.sequelize.sync()]).then(
+  ([staticMiddleware, _app]) => {
+    appRouter = _app
+
+    app.use(logger('dev'))
+    app.use(staticMiddleware)
+    app.use((req, res, next) => {
+      appRouter(req, res, next)
+    })
+    app.use(handleError)
+
+    server = createServer(app)
     server.listen(port, () => {
       debug(`Express server listening on port ${server.address().port}`)
     })
@@ -46,10 +51,7 @@ appPromise.then(app => {
       if (error.syscall !== 'listen') {
         throw error
       }
-
       const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`
-
-      // handle specific listen errors with friendly messages
       switch (error.code) {
         case 'EACCES':
           console.error(`${bind} requires elevated privileges`)
@@ -69,19 +71,13 @@ appPromise.then(app => {
         typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`
       debug(`Listening on ${bind}`)
     })
-  })
-})
+  }
+)
 
 if (process.env.HOT_MODE) {
   module.hot.accept('./app', () => {
-    if (lastApp && server) {
-      server.removeListener('request', lastApp)
-      lastApp = null
-      appPromise.then(newApp => {
-        enhanceApp(newApp)
-        server.on('request', newApp)
-        lastApp = newApp
-      })
-    }
+    appPromise.then(_app => {
+      appRouter = _app
+    })
   })
 }
