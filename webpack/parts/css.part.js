@@ -3,17 +3,23 @@ const css = ({ NODE_ENV, SERVER, HOT_MODE }) => {
   let resourceLoader = null
   const plugins = []
 
+  const PROD_MODE = NODE_ENV === 'production'
+
   if (EXTRACT) {
     const MiniCssExtractPlugin = require('mini-css-extract-plugin')
     resourceLoader = MiniCssExtractPlugin.loader
-    plugins.push(new MiniCssExtractPlugin())
+    plugins.push(
+      new MiniCssExtractPlugin({
+        filename: PROD_MODE ? '[name].[contenthash:8].css' : '[name].css',
+        chunkFilename: PROD_MODE ? '[id].[contenthash:8].css' : '[id].css',
+      })
+    )
   } else if (!SERVER) {
     resourceLoader = 'style-loader'
   }
 
   const cssLoader = SERVER ? 'css-loader/locals' : 'css-loader'
-  const PROD = NODE_ENV === 'production'
-  const sourceMap = !PROD
+  const sourceMap = !PROD_MODE
 
   const rules = [
     {
@@ -22,7 +28,7 @@ const css = ({ NODE_ENV, SERVER, HOT_MODE }) => {
         {
           loader: cssLoader,
           options: {
-            minimize: PROD,
+            minimize: PROD_MODE,
             sourceMap,
           },
         },

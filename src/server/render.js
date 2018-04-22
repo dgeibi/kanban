@@ -11,7 +11,7 @@ import Root from '../app/Root'
 import createApp from '../app/createApp'
 
 let stats
-let manifest
+let assets
 
 if (process.env.HOT_MODE) {
   module.hot.accept(['../app/createApp', '../app/Root'])
@@ -19,22 +19,25 @@ if (process.env.HOT_MODE) {
 
 const loadJSON = (p, xfs) => JSON.parse((xfs || fs).readFileSync(p, 'utf8'))
 
-const ensureManifest = ({ outputPath }) => {
+const loadManifests = ({ outputPath }) => {
   if (!stats) {
     stats = loadJSON(path.join(__dirname, `react-loadable.json`))
   }
-  if (!manifest) {
-    manifest = {
-      css: [],
-      js: [],
+  if (!assets) {
+    const manifest = loadJSON(
+      path.join(outputPath, '/manifest.json'),
+      global.mfs
+    )
+    assets = {
+      styles: [],
+      scripts: [],
     }
-    const data = loadJSON(path.join(outputPath, '/manifest.json'), global.mfs)
-    Object.keys(data).forEach(k => {
-      const asset = data[k]
-      if (asset.endsWith('.css')) {
-        manifest.css.push(asset)
-      } else if (asset.endsWith('.js')) {
-        manifest.js.push(asset)
+    Object.keys(manifest).forEach(k => {
+      const x = manifest[k]
+      if (x.endsWith('.css')) {
+        assets.styles.push(x)
+      } else if (x.endsWith('.js')) {
+        assets.scripts.push(x)
       }
     })
   }
@@ -42,58 +45,53 @@ const ensureManifest = ({ outputPath }) => {
 
 export default function render(req, res) {
   const modules = []
-
   const context = {}
-  const pathname = req.url
-  const { publicPath, outputPath } = req
-  ensureManifest({ outputPath })
+  const location = req.url
+  loadManifests({ outputPath: req.outputPath })
+
   const app = createApp({
     history: createMemoryHistory({
-      initialEntries: [pathname],
+      initialEntries: [location],
     }),
     initialState: req.initialState,
     router: () => (
-      <StaticRouter location={pathname} context={context}>
-        <Root />
+      <StaticRouter location={location} context={context}>
+        <Loadable.Capture report={moduleName => modules.push(moduleName)}>
+          <Root />
+        </Loadable.Capture>
       </StaticRouter>
     ),
   })
   const App = app.start()
-
-  const appHTML = renderToString(
-    <Loadable.Capture report={moduleName => modules.push(moduleName)}>
-      <App />
-    </Loadable.Capture>
-  )
+  const appHTML = renderToString(<App />)
   const helmet = Helmet.renderStatic()
-  const bundles = getBundles(stats, modules)
-  const formatUrl = x => `${publicPath}${x.file}`
-  const styles = manifest.css.concat(
-    bundles.filter(bundle => bundle.file.endsWith('.css')).map(formatUrl)
-  )
-  const scripts = manifest.js.concat(
-    bundles.filter(bundle => bundle.file.endsWith('.js')).map(formatUrl)
-  )
   const preloadData = JSON.stringify({
     state: app._store.getState(),
     token: req.csrfToken(),
   })
 
-  const htmlString = `<!DOCTYPE html>
+  // flush assets
+  const bundles = getBundles(stats, modules)
+  const selectUrl = x => x.publicPath
+  const styles = assets.styles.concat(
+    bundles.filter(bundle => bundle.file.endsWith('.css')).map(selectUrl)
+  )
+  const scripts = assets.scripts.concat(
+    bundles.filter(bundle => bundle.file.endsWith('.js')).map(selectUrl)
+  )
+  res.status(context.status || 200).send(`<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  ${helmet.title.toString()}
-  ${styles.map(style => `<link href="${style}" rel="stylesheet"/>`).join('\n')}
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+${helmet.title.toString()}
+${styles.map(x => `<link href="${x}" rel="stylesheet"/>`).join('\n')}
 </head>
 <body><div id="root">${appHTML}</div>
 <script>window.__PRELOAD__=${preloadData};</script>
-${scripts.map(script => `<script src="${script}"></script>`).join('\n')}
+${scripts.map(x => `<script src="${x}"></script>`).join('\n')}
 <script>window.__main__();delete window.__main__;</script>
 </body>
-</html>
-`
-  res.status(context.status || 200).send(htmlString)
+</html>`)
 }

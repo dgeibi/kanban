@@ -9,6 +9,10 @@ module.exports = ({ SERVER, NODE_ENV }) => {
         node: 'current',
       },
     })
+  } else {
+    babelReactPreset.push({
+      useBuiltIns: 'usage',
+    })
   }
   const importAntd = [
     'import',

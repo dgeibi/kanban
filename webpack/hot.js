@@ -8,11 +8,13 @@ const config = new ConfigBuilder({
   hot: true,
 }).toConfigSync()
 
-let first = false
+let running = false
 const exec = () => {
-  first = true
+  running = true
   execa('node', ['./dist/server.js'], {
     stdio: 'inherit',
+  }).on('exit', () => {
+    running = false
   })
 }
 
@@ -30,7 +32,7 @@ compiler.watch(
         colors: true,
       })
     )
-    if (!first && !stats.hasErrors()) {
+    if (!running && !stats.hasErrors()) {
       exec()
     }
   }

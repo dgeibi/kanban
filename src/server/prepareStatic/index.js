@@ -8,9 +8,10 @@ const prepareStatic = async app => {
   if (process.env.HOT_MODE) {
     const config = require('./webpack.hot.config')()
     const hotPath = `${publicPath}__webpack_hmr`
-    config.entry.unshift(
-      `webpack-hot-middleware/client?reload=true&path=${hotPath}`
-    )
+    config.entry = [
+      'eventsource/lib/eventsource-polyfill.js',
+      `webpack-hot-middleware/client?reload=true&path=${hotPath}`,
+    ].concat(config.entry)
     const hot = {
       path: hotPath,
     }
