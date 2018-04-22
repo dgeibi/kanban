@@ -1,6 +1,6 @@
 const ManifestPlugin = require('webpack-manifest-plugin')
 const paths = require('../paths')
-const path = require('path')
+const { extname } = require('path')
 const { ReactLoadablePlugin } = require('@7rulnik/react-loadable/webpack')
 
 module.exports = ({ NODE_ENV }) => {
@@ -27,11 +27,26 @@ module.exports = ({ NODE_ENV }) => {
     entry: ['./src/client/client.js'],
     plugins: [
       new ReactLoadablePlugin({
-        filename: path.resolve('./dist/react-loadable.json'),
+        filename: paths.asyncChunksStats,
       }),
       new ManifestPlugin({
         filter: x => x.isInitial,
         writeToFileEmit: true,
+        fileName: paths.initialAssets,
+        seed: {
+          styles: [],
+          scripts: [],
+        },
+        generate: (seed, files) =>
+          files.reduce((assets, { path }) => {
+            const ext = extname(path)
+            if (ext === '.css') {
+              assets.styles.push(path)
+            } else if (ext === '.js') {
+              assets.scripts.push(path)
+            }
+            return assets
+          }, seed),
       }),
     ],
   }

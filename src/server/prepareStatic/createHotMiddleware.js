@@ -40,26 +40,20 @@ const skip = match => x => (req, res, next) => {
   }
 }
 
-export default async function({
-  config,
-  historyApiFallback,
-  publicPath,
-  hot = {},
-}) {
-  const webpackConfig = await normalizeConfig(config)
-  webpackConfig.plugins = webpackConfig.plugins || []
-  const compiler = webpack(webpackConfig)
-  const devMiddleware = webpackDevMiddleware(compiler, {
-    publicPath,
-  })
-  const hotMiddleware = webpackHotMiddleware(compiler, hot)
-  let middlewares = [devMiddleware, hotMiddleware]
+export default function({ config, historyApiFallback, publicPath, hot = {} }) {
+  const compiler = webpack(normalizeConfig(config))
+  let middlewares = [
+    webpackDevMiddleware(compiler, {
+      publicPath,
+    }),
+    webpackHotMiddleware(compiler, hot),
+  ]
   if (historyApiFallback) {
     middlewares.push(historyApi({ compiler }))
   }
   middlewares = publicPath
     ? middlewares.map(skip(req => req.url.indexOf(publicPath) === 0))
     : middlewares
-  global.mfs = compiler.outputFileSystem
+  middlewares.compiler = compiler
   return middlewares
 }

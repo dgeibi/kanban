@@ -20,9 +20,7 @@ const prepareStatic = () => {
       hot,
     })
   }
-  return Promise.resolve(
-    express.Router().use(publicPath, express.static(outputPath))
-  )
+  return express.Router().use(publicPath, express.static(outputPath))
 }
 
 export default prepareStatic

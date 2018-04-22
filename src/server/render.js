@@ -3,53 +3,51 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'dva/router'
 import { Helmet } from 'react-helmet'
 import { createMemoryHistory } from 'history'
-import fs from 'fs'
-import path from 'path'
 import { getBundles } from '@7rulnik/react-loadable/webpack'
 import Loadable from '@7rulnik/react-loadable'
+import fse from 'fs-extra'
+
 import Root from '../app/Root'
 import createApp from '../app/createApp'
 
-let stats
-let assets
+let asyncChunksStats
+let initialAssets
 
 if (process.env.HOT_MODE) {
   module.hot.accept(['../app/createApp', '../app/Root'])
 }
 
-const loadJSON = (p, xfs) => JSON.parse((xfs || fs).readFileSync(p, 'utf8'))
+const paths = require('~/../webpack/paths')
 
-const loadManifests = ({ outputPath }) => {
-  if (!stats) {
-    stats = loadJSON(path.join(__dirname, `react-loadable.json`))
+const loadManifests = () => {
+  if (!asyncChunksStats) {
+    asyncChunksStats = fse.readJSONSync(paths.asyncChunksStats)
   }
-  if (!assets) {
-    const manifest = loadJSON(
-      path.join(outputPath, '/manifest.json'),
-      global.mfs
-    )
-    assets = {
-      styles: [],
-      scripts: [],
-    }
-    Object.keys(manifest).forEach(k => {
-      const x = manifest[k]
-      if (x.endsWith('.css')) {
-        assets.styles.push(x)
-      } else if (x.endsWith('.js')) {
-        assets.scripts.push(x)
-      }
-    })
+  if (!initialAssets) {
+    initialAssets = fse.readJSONSync(paths.initialAssets)
   }
 }
 
-const { outputPath } = require('~/../webpack/paths')
+const selectUrl = x => x.publicPath
+const isStyle = x => x.file.endsWith('.css')
+const isScript = x => x.file.endsWith('.js')
+
+const getAssets = modules => {
+  const bundles = getBundles(asyncChunksStats, modules)
+
+  return {
+    styles: initialAssets.styles.concat(bundles.filter(isStyle).map(selectUrl)),
+    scripts: initialAssets.scripts.concat(
+      bundles.filter(isScript).map(selectUrl)
+    ),
+  }
+}
 
 export default function render(req, res) {
   const modules = []
   const context = {}
   const location = req.url
-  loadManifests({ outputPath })
+  loadManifests()
 
   const app = createApp({
     history: createMemoryHistory({
@@ -71,16 +69,8 @@ export default function render(req, res) {
     state: app._store.getState(),
     token: req.csrfToken(),
   })
+  const { scripts, styles } = getAssets(modules)
 
-  // flush assets
-  const bundles = getBundles(stats, modules)
-  const selectUrl = x => x.publicPath
-  const styles = assets.styles.concat(
-    bundles.filter(bundle => bundle.file.endsWith('.css')).map(selectUrl)
-  )
-  const scripts = assets.scripts.concat(
-    bundles.filter(bundle => bundle.file.endsWith('.js')).map(selectUrl)
-  )
   res.status(context.status || 200).send(`<!DOCTYPE html>
 <html>
 <head>
@@ -88,11 +78,11 @@ export default function render(req, res) {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ${helmet.title.toString()}
-${styles.map(x => `<link href="${x}" rel="stylesheet"/>`).join('\n')}
+${styles.map(x => `<link href="${x}" rel="stylesheet"/>`).join('')}
 </head>
 <body><div id="root">${appHTML}</div>
 <script>window.__PRELOAD__=${preloadData};</script>
-${scripts.map(x => `<script src="${x}"></script>`).join('\n')}
+${scripts.map(x => `<script src="${x}"></script>`).join('')}
 <script>window.__main__();delete window.__main__;</script>
 </body>
 </html>`)
