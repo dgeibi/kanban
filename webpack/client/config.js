@@ -1,5 +1,7 @@
 const ManifestPlugin = require('webpack-manifest-plugin')
 const paths = require('../paths')
+const path = require('path')
+const { ReactLoadablePlugin } = require('@7rulnik/react-loadable/webpack')
 
 module.exports = ({ NODE_ENV }) => {
   const PROD = NODE_ENV === 'production'
@@ -17,11 +19,20 @@ module.exports = ({ NODE_ENV }) => {
     // }),
     mode: NODE_ENV,
     output: {
-      publicPath: '/public/',
-      path: paths.dist.public,
+      publicPath: paths.publicPath,
+      path: paths.outputPath,
+      chunkFilename: PROD ? '[name].[chunkhash:8].js' : '[name].js',
       filename: PROD ? '[name].[chunkhash:8].js' : '[name].js',
     },
     entry: ['./src/client/client.js'],
-    plugins: [new ManifestPlugin()],
+    plugins: [
+      new ReactLoadablePlugin({
+        filename: path.resolve('./dist/react-loadable.json'),
+      }),
+      new ManifestPlugin({
+        filter: x => x.isInitial,
+        writeToFileEmit: true,
+      }),
+    ],
   }
 }

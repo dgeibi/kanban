@@ -8,6 +8,7 @@ module.exports = ({ NODE_ENV }) => {
     mode: NODE_ENV,
     output: {
       filename: 'server.js',
+      chunkFilename: '[name].js',
       libraryTarget: 'commonjs2',
     },
     devtool: 'source-map',
