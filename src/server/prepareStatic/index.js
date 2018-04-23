@@ -1,10 +1,9 @@
 import express from 'express'
 
-const { publicPath, outputPath } = require('~/../webpack/paths')
-
 const prepareStatic = () => {
+  const { publicPath, outputPath } = require('~/../webpack/paths')
   if (process.env.HOT_MODE) {
-    const config = require('./webpack.hot.config')()
+    const config = require('~/../webpack/client')({ hot: true }).toConfigSync()
     const hotPath = `${publicPath}__webpack_hmr`
     config.entry = [
       'eventsource/lib/eventsource-polyfill.js',
@@ -13,7 +12,8 @@ const prepareStatic = () => {
     const hot = {
       path: hotPath,
     }
-    return require('./createHotMiddleware').default({
+    const webpackMiddleware = require('./webpackMiddleware')
+    return webpackMiddleware({
       publicPath,
       outputPath,
       config,

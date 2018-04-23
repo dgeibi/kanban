@@ -1,7 +1,6 @@
 const path = require('path')
 const commandLineArgs = require('command-line-args')
 const runWebpack = require('./utils/runWebpack')
-const ConfigBuilder = require('./utils/ConfigBuilder')
 
 const options = commandLineArgs([
   { name: 'dist', alias: 'd', type: String, defaultValue: './dist' },
@@ -9,8 +8,8 @@ const options = commandLineArgs([
   { name: 'mode', type: String, defaultValue: 'development' },
 ])
 
-const serverConfig = new ConfigBuilder(require('./server/opts')).toConfigSync()
-const clientConfig = new ConfigBuilder(require('./client/opts')).toConfigSync()
+const serverConfig = require('./server')().toConfigSync()
+const clientConfig = require('./client')().toConfigSync()
 
 const config = [serverConfig, clientConfig]
 

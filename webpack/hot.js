@@ -1,12 +1,6 @@
 const webpack = require('webpack')
 const execa = require('execa')
-
-const ConfigBuilder = require('./utils/ConfigBuilder')
-
-const config = new ConfigBuilder({
-  ...require('./server/opts'),
-  hot: true,
-}).toConfigSync()
+const config = require('./server')({ hot: true }).toConfigSync()
 
 let running = false
 const exec = () => {
