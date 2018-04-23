@@ -1,45 +1,37 @@
-const path = require('path')
-const commandLineArgs = require('command-line-args')
 const runWebpack = require('./utils/runWebpack')
 
-const options = commandLineArgs([
-  { name: 'dist', alias: 'd', type: String, defaultValue: './dist' },
-  { name: 'serve', alias: 's', type: Boolean, defaultValue: false },
-  { name: 'mode', type: String, defaultValue: 'development' },
-])
+module.exports = options => {
+  process.env.NODE_ENV = options.env
+  const serverConfig = require('./server')({
+    NODE_ENV: options.env,
+  }).toConfigSync()
+  const clientConfig = require('./client')({
+    NODE_ENV: options.env,
+  }).toConfigSync()
 
-const serverConfig = require('./server')().toConfigSync()
-const clientConfig = require('./client')().toConfigSync()
+  const config = [serverConfig, clientConfig]
 
-const config = [serverConfig, clientConfig]
+  const build = () =>
+    runWebpack(config).then(stats => {
+      console.log(
+        stats.toString({
+          chunks: false,
+          colors: true,
+        })
+      )
+      if (stats.hasErrors()) throw Error('webpack build has errors')
+    })
 
-const outputPath = path.resolve(options.dist)
+  const serve = () => {
+    const execa = require('execa')
+    return execa('node', ['./dist/server.js'], {
+      stdio: 'inherit',
+    })
+  }
 
-const build = () => {
-  const rimraf = require('rimraf')
-  console.log(`rm -rf ${outputPath}`)
-  rimraf.sync(outputPath)
-
-  return runWebpack(config).then(stats => {
-    console.log(
-      stats.toString({
-        chunks: false,
-        colors: true,
-      })
-    )
-    if (stats.hasErrors()) throw Error('webpack build has errors')
-  })
+  build()
+    .then(() => options.serve && serve())
+    .catch(error => {
+      console.error(error.stack || error)
+    })
 }
-
-const serve = () => {
-  const execa = require('execa')
-  return execa('node', ['./dist/server.js'], {
-    stdio: 'inherit',
-  })
-}
-
-build()
-  .then(() => options.serve && serve())
-  .catch(error => {
-    console.error(error)
-  })

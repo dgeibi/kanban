@@ -2,10 +2,9 @@ const nodeExternals = require('webpack-node-externals')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = ({ NODE_ENV }) => {
-  const PROD = NODE_ENV === 'production'
+  const PROD_MODE = NODE_ENV === 'production'
   return {
     entry: ['./src/server/server.js'],
-    mode: NODE_ENV,
     output: {
       filename: 'server.js',
       chunkFilename: '[id].js',
@@ -28,7 +27,7 @@ module.exports = ({ NODE_ENV }) => {
       }),
     ],
     optimization: {
-      minimizer: PROD
+      minimizer: PROD_MODE
         ? [
             new UglifyJsPlugin({
               cache: true,

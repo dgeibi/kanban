@@ -17,7 +17,6 @@ module.exports = ({ NODE_ENV }) => {
         },
       },
     }),
-    mode: NODE_ENV,
     output: {
       publicPath: paths.publicPath,
       path: paths.outputPath,

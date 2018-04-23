@@ -1,19 +1,15 @@
-const NODE_ENV = process.env.NODE_ENV || 'development'
 const webpack = require('webpack')
 const define = require('./define')
 const merge = require('./merge')
 
-const makeEnv = envs => {
-  const env = Object.assign({}, envs.default)
-  if (envs[NODE_ENV]) {
-    Object.assign(env, envs[NODE_ENV])
-  }
-  return env
-}
-
 module.exports = class ConfigBuilder {
-  constructor({ server, env = {}, hot, configs = [] } = {}) {
-    this.env = makeEnv(env)
+  constructor({ server, env = {}, hot, configs = [], NODE_ENV } = {}) {
+    this.env = {}
+    Object.assign(this.env, env.default)
+    NODE_ENV = NODE_ENV || process.env.NODE_ENV || 'development'
+    if (NODE_ENV !== 'default' && env[NODE_ENV]) {
+      Object.assign(this.env, env[NODE_ENV])
+    }
     this.env.NODE_ENV = NODE_ENV
     this.env.SERVER = Boolean(server)
     this.env.HOT_MODE = Boolean(hot)
@@ -29,6 +25,10 @@ module.exports = class ConfigBuilder {
             define(this.toDefinition()),
             this.env.HOT_MODE && new webpack.HotModuleReplacementPlugin(),
           ].filter(x => !!x),
+        },
+        (this.env.NODE_ENV === 'development' ||
+          this.env.NODE_ENV === 'production') && {
+          mode: this.env.NODE_ENV,
         },
         extra,
       ],
