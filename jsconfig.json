@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "config/*": ["webpack/*"],
     },
     "target": "ES6",
     "module": "commonjs",

@@ -1,9 +1,9 @@
 import express from 'express'
 
 const prepareStatic = () => {
-  const { publicPath, outputPath } = require('~/../webpack/paths')
+  const { publicPath, outputPath } = require('config/paths')
   if (process.env.HOT_MODE) {
-    const config = require('~/../webpack/client')({ hot: true }).toConfigSync()
+    const config = require('config/client')({ hot: true }).toConfigSync()
     const hotPath = `${publicPath}__webpack_hmr`
     config.entry = [
       'eventsource/lib/eventsource-polyfill.js',

@@ -20,8 +20,8 @@ module.exports = () => {
   compiler.watch(
     {
       aggregateTimeout: 300,
-      poll: 1000,
     },
+    // multiple times
     (err, stats) => {
       console.log(
         stats.toString({

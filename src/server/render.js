@@ -17,7 +17,7 @@ if (process.env.HOT_MODE) {
   module.hot.accept(['../app/createApp', '../app/Root'])
 }
 
-const paths = require('~/../webpack/paths')
+const paths = require('config/paths')
 
 const loadManifests = () => {
   if (!asyncChunksStats) {

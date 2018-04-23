@@ -6,5 +6,6 @@ const configurePaths = root => ({
   publicPath: '/public/',
   initialAssets: path.join(root, 'dist/initialAssets.json'),
   asyncChunksStats: path.join(root, 'dist/asyncChunksStats.json'),
+  config: path.join(root, 'webpack'),
 })
 module.exports = configurePaths(process.cwd())
