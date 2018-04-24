@@ -1,5 +1,5 @@
 export const auenticated = (req, res, next) => {
-  if (!req.isAuthenticated1()) {
+  if (!req.isAuthenticated()) {
     res.status(401).end()
   } else {
     next()
