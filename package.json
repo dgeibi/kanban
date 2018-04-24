@@ -16,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@7rulnik/react-loadable": "^5.3.4",
+    "@babel/runtime": "^7.0.0-beta.46",
     "antd": "^3.4.1",
     "async-validator": "^1.8.2",
     "body-parser": "^1.18.2",
@@ -49,14 +50,13 @@
     "validator": "^9.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.44",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.44",
+    "@babel/core": "^7.0.0-beta.46",
     "autoprefixer": "^8.3.0",
     "babel-loader": "^8.0.0-beta.2",
     "babel-plugin-emotion": "^9.1.0",
     "babel-plugin-import": "^1.7.0",
     "babel-plugin-lodash": "^3.3.2",
-    "babel-preset-dgeibi-react": "^1.0.2",
+    "babel-preset-dgeibi-react": "^1.0.4",
     "command-line-args": "^5.0.2",
     "cross-env": "^5.1.4",
     "css-loader": "^0.28.11",

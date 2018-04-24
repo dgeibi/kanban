@@ -47,7 +47,6 @@ module.exports = ({ SERVER, NODE_ENV }) => {
                       ['emotion', { sourceMap: !PROD }],
                       'lodash',
                       importAntd,
-                      '@babel/plugin-syntax-dynamic-import',
                       '@7rulnik/react-loadable/babel',
                     ],
                   },
