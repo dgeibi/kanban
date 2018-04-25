@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize'
 import normalizeEmail from 'validator/lib/normalizeEmail'
 import nanoid from 'nanoid'
-import hashPw from '../security/hashPw'
+import { bhash } from '~/server/helper'
 
 /**
  * @param {Sequelize.Sequelize} sequelize
@@ -22,9 +22,9 @@ export default function(sequelize) {
     },
     password: {
       allowNull: false,
-      type: Sequelize.CHAR(64),
+      type: Sequelize.CHAR(60),
       set(val) {
-        this.setDataValue('password', hashPw(val))
+        this.setDataValue('password', bhash(val))
       },
     },
     email: {

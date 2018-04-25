@@ -18,13 +18,16 @@ export const username = [
   },
 ]
 
+/**
+ * 虽然 bcrypt 算法输入有大小限制（72字节）
+ * 但一般人不会输入那么多，所以过长就截断吧……
+ */
 export const password = [
   required,
   {
     type: 'string',
-    min: 6,
-    max: 100,
-    message: `${fields.password}在6到100位之间`,
+    min: 12,
+    message: `${fields.password}至少12位`,
   },
 ]
 

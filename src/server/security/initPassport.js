@@ -3,9 +3,9 @@ import LocalStrategy from 'passport-local'
 
 import isEmail from 'validator/lib/isEmail'
 import normalizeEmail from 'validator/lib/normalizeEmail'
+import { bcompare } from '~/server/helper'
 
 import models from '../models'
-import hashPw from './hashPw'
 
 const { User } = models
 
@@ -48,7 +48,7 @@ passport.use(
     (emailOrUsername, password, done) => {
       findByEmailOrUsername(emailOrUsername)
         .then(user => {
-          if (user.password === hashPw(password)) {
+          if (bcompare(password, user.password)) {
             done(null, user)
           } else {
             done(null, false)

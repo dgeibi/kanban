@@ -9,4 +9,5 @@
 
 ## 防密码破解
 
-[EtherDream's Blog](https://www.cnblogs.com/index-html/tag/%E5%AF%86%E7%A0%81%E5%AD%A6/) 值得读
+* [EtherDream's Blog](https://www.cnblogs.com/index-html/tag/%E5%AF%86%E7%A0%81%E5%AD%A6/) 值得读
+* [如何防范密码被破解 | | 酷 壳 - CoolShell](https://coolshell.cn/articles/2078.html)

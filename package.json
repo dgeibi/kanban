@@ -19,6 +19,7 @@
     "@babel/runtime": "^7.0.0-beta.46",
     "antd": "^3.4.1",
     "async-validator": "^1.8.2",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "core-js": "^2.5.5",
     "csurf": "^1.9.0",
