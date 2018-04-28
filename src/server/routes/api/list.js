@@ -8,6 +8,20 @@ const r = Router()
 
 const { List, Card } = models
 
+r.get(
+  '/',
+  autoCatch(async (req, res) => {
+    const lists = await List.findAll({
+      where: {
+        boardId: req.board.id,
+      },
+      include: [Card],
+      order: ['index', [Card, 'index']],
+    })
+    res.json(lists)
+  })
+)
+
 r.post(
   '/create',
   autoCatch(async (req, res) => {

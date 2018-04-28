@@ -18,15 +18,15 @@ class Login extends Component {
     const { getFieldDecorator } = this.props.form
     return (
       <Form onSubmit={this.handleSubmit}>
-        <FormItem label="用户名或邮件地址">
+        <FormItem>
           {getFieldDecorator('emailOrUsername', {
             rules: validation.emailOrUsername,
-          })(<Input autoComplete="on" />)}
+          })(<Input autoComplete="on" placeholder="用户名或邮件地址" />)}
         </FormItem>
-        <FormItem label="密码">
+        <FormItem>
           {getFieldDecorator('password', {
             rules: validation.password,
-          })(<Input type="password" autoComplete="on" />)}
+          })(<Input type="password" autoComplete="on" placeholder="密码" />)}
         </FormItem>
         <FormItem>
           <Button type="primary" htmlType="submit">

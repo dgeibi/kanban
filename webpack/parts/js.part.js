@@ -10,6 +10,7 @@ module.exports = ({ SERVER, NODE_ENV }) => {
       },
     })
   } else {
+    // todo ie10 classes broken
     babelReactPreset.push({
       useBuiltIns: 'usage',
     })
@@ -22,7 +23,7 @@ module.exports = ({ SERVER, NODE_ENV }) => {
         }
       : {
           libraryName: 'antd',
-          style: 'css',
+          style: true,
           libraryDirectory: 'es',
         },
   ]

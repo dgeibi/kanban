@@ -4,7 +4,11 @@ const fse = require('fs-extra')
 const options = commandLineArgs([
   { name: 'command', defaultOption: true, defaultValue: 'dev' },
   { name: 'serve', alias: 's', type: Boolean, defaultValue: false },
-  { name: 'env', type: String, defaultValue: 'development' },
+  {
+    name: 'env',
+    type: String,
+    defaultValue: process.env.NODE_ENV || 'development',
+  },
 ])
 
 const clean = () => fse.removeSync('./dist')

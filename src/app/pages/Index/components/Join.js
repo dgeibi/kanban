@@ -43,26 +43,34 @@ class Join extends Component {
 
     return (
       <Form onSubmit={this.handleSubmit}>
-        <FormItem label="邮件地址">
+        <FormItem>
           {getFieldDecorator('email', {
             rules: validation.email,
-          })(<Input type="email" autoComplete="email" />)}
+          })(
+            <Input type="email" autoComplete="email" placeholder="邮件地址" />
+          )}
         </FormItem>
-        <FormItem label="用户名">
+        <FormItem>
           {getFieldDecorator('username', {
             rules: validation.username,
-          })(<Input autoComplete="on" />)}
+          })(<Input autoComplete="on" placeholder="用户名" />)}
         </FormItem>
-        <FormItem label="密码">
+        <FormItem>
           {getFieldDecorator('password', {
             rules: validation.password.concat([
               {
                 validator: this.validateToNextPassword,
               },
             ]),
-          })(<Input type="password" autoComplete="on" />)}
+          })(
+            <Input
+              type="password"
+              autoComplete="on"
+              placeholder="密码（至少12位）"
+            />
+          )}
         </FormItem>
-        <FormItem label="重复密码">
+        <FormItem>
           {getFieldDecorator('confirm', {
             rules: validation.password.concat([
               {
@@ -74,6 +82,7 @@ class Join extends Component {
               type="password"
               autoComplete="on"
               onBlur={this.handleConfirmBlur}
+              placeholder="重复输入密码"
             />
           )}
         </FormItem>

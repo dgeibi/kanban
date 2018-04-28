@@ -24,6 +24,9 @@ export default model(module)({
     *login({ payload: info }, { call, put }) {
       const data = yield call(login, info)
       yield put({
+        type: 'boards/fetchAll',
+      })
+      yield put({
         type: 'save',
         payload: data,
       })

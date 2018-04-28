@@ -2,16 +2,15 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'dva/router'
 import { Helmet } from 'react-helmet'
+import autoCatch from 'express-async-handler'
 import { createMemoryHistory } from 'history'
 import { getBundles } from '@7rulnik/react-loadable/webpack'
 import Loadable from '@7rulnik/react-loadable'
+import { renderStylesToString } from 'emotion-server'
 import fse from 'fs-extra'
-
+import { resetServerContext } from 'react-beautiful-dnd'
 import Root from '../app/Root'
 import createApp from '../app/createApp'
-
-let asyncChunksStats
-let initialAssets
 
 if (process.env.HOT_MODE) {
   module.hot.accept(['../app/createApp', '../app/Root'])
@@ -19,35 +18,44 @@ if (process.env.HOT_MODE) {
 
 const paths = require('config/paths')
 
-const loadManifests = () => {
-  if (!asyncChunksStats) {
-    asyncChunksStats = fse.readJSONSync(paths.asyncChunksStats)
-  }
-  if (!initialAssets) {
-    initialAssets = fse.readJSONSync(paths.initialAssets)
-  }
-}
+const loadManifests = () =>
+  Promise.all([
+    fse.readJSON(paths.asyncChunksStats),
+    fse.readJSON(paths.initialAssets),
+  ]).then(([asyncChunksStats, initialAssets]) => ({
+    asyncChunksStats,
+    initialAssets,
+  }))
+
+const manifestsPromise = process.env.HOT_MODE
+  ? new Promise((resolve, reject) => {
+      const waitOn = require('wait-on') // eslint-disable-line
+      waitOn(
+        {
+          resources: [paths.initialAssets, paths.asyncChunksStats],
+          interval: 300,
+        },
+        error => {
+          if (error) {
+            reject(error)
+            return
+          }
+
+          resolve(loadManifests())
+        }
+      )
+    })
+  : loadManifests()
 
 const selectUrl = x => x.publicPath
 const isStyle = x => x.file.endsWith('.css')
 const isScript = x => x.file.endsWith('.js')
 
-const getAssets = modules => {
-  const bundles = getBundles(asyncChunksStats, modules)
-
-  return {
-    styles: initialAssets.styles.concat(bundles.filter(isStyle).map(selectUrl)),
-    scripts: initialAssets.scripts.concat(
-      bundles.filter(isScript).map(selectUrl)
-    ),
-  }
-}
-
-export default function render(req, res) {
+export default autoCatch(async function render(req, res) {
+  const { asyncChunksStats, initialAssets } = await manifestsPromise
+  const location = req.url
   const modules = []
   const context = {}
-  const location = req.url
-  loadManifests()
 
   const app = createApp({
     history: createMemoryHistory({
@@ -63,12 +71,29 @@ export default function render(req, res) {
     ),
   })
   const App = app.start()
-  const appHTML = renderToString(<App />)
+  resetServerContext()
+  const appHTML = renderStylesToString(renderToString(<App />))
   const helmet = Helmet.renderStatic()
-  const preloadData = JSON.stringify({
-    state: app._store.getState(),
-    token: req.csrfToken(),
-  })
+  const preloadData = Buffer.from(
+    JSON.stringify({
+      state: app._store.getState(),
+      token: req.csrfToken(),
+    })
+  ).toString('base64')
+
+  const getAssets = () => {
+    const bundles = getBundles(asyncChunksStats, modules)
+
+    return {
+      styles: initialAssets.styles.concat(
+        bundles.filter(isStyle).map(selectUrl)
+      ),
+      scripts: initialAssets.scripts.concat(
+        bundles.filter(isScript).map(selectUrl)
+      ),
+    }
+  }
+
   const { scripts, styles } = getAssets(modules)
 
   res.status(context.status || 200).send(`<!DOCTYPE html>
@@ -81,9 +106,9 @@ ${helmet.title.toString()}
 ${styles.map(x => `<link href="${x}" rel="stylesheet"/>`).join('')}
 </head>
 <body><div id="root">${appHTML}</div>
-<script>window.__PRELOAD__=${preloadData};</script>
+<script id="app-data" type="text/plain">${preloadData}</script>
 ${scripts.map(x => `<script src="${x}"></script>`).join('')}
 <script>window.__main__();delete window.__main__;</script>
 </body>
 </html>`)
-}
+})

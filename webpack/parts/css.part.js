@@ -1,4 +1,4 @@
-const css = ({ NODE_ENV, SERVER, HOT_MODE }) => {
+const cssPart = ({ NODE_ENV, SERVER, HOT_MODE }) => {
   const EXTRACT = !SERVER && !HOT_MODE
   let resourceLoader = null
   const plugins = []
@@ -21,24 +21,39 @@ const css = ({ NODE_ENV, SERVER, HOT_MODE }) => {
   const cssLoader = SERVER ? 'css-loader/locals' : 'css-loader'
   const sourceMap = !PROD_MODE
 
+  const postcss = () => ({
+    loader: 'postcss-loader',
+    options: {
+      sourceMap,
+    },
+  })
+  const css = () => ({
+    loader: cssLoader,
+    options: {
+      minimize: PROD_MODE,
+      sourceMap,
+    },
+  })
+
   const rules = [
     {
-      test: /\.css$/,
+      test: /\.less$/,
       use: [
+        css(),
+        postcss(),
         {
-          loader: cssLoader,
+          loader: 'less-loader',
           options: {
-            minimize: PROD_MODE,
-            sourceMap,
-          },
-        },
-        {
-          loader: 'postcss-loader',
-          options: {
+            modifyVars: require('../theme')(),
+            javascriptEnabled: true,
             sourceMap,
           },
         },
       ],
+    },
+    {
+      test: /\.css$/,
+      use: [css(), postcss()],
     },
   ]
   if (resourceLoader) {
@@ -54,4 +69,4 @@ const css = ({ NODE_ENV, SERVER, HOT_MODE }) => {
   }
 }
 
-module.exports = css
+module.exports = cssPart

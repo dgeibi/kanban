@@ -1,7 +1,10 @@
 {
   "extends": "dgeibi/react",
   "rules": {
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "prefer-arrow-callback": ["error", { "allowNamedFunctions": true }],
+    "import/prefer-default-export": "off",
+    "no-restricted-syntax": "off"
   },
   "settings": {
     "import/resolver": {

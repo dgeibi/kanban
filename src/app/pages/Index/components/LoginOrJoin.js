@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Card } from 'antd'
 import Login from './Login'
 import Join from './Join'
@@ -14,9 +14,12 @@ const tabList = [
   },
 ]
 
-class LoginOrJoin extends Component {
-  state = {
-    key: 'join',
+class LoginOrJoin extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      key: 'join',
+    }
   }
 
   onTabChange = key => {
@@ -25,9 +28,14 @@ class LoginOrJoin extends Component {
 
   render() {
     const { key } = this.state
-    const { onLogin, onJoin } = this.props
+    const { onLogin, onJoin, className } = this.props
     return (
-      <Card tabList={tabList} onTabChange={this.onTabChange} activeTabKey={key}>
+      <Card
+        tabList={tabList}
+        onTabChange={this.onTabChange}
+        activeTabKey={key}
+        className={className}
+      >
         {key === 'join' ? (
           <Join onJoin={onJoin} />
         ) : (
