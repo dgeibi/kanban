@@ -5,6 +5,10 @@ import * as configSet from '../config/db'
 const env = process.env.NODE_ENV || 'development'
 
 const config = configSet[env]
+
+/**
+ * @type {{ Sequelize: Sequelize.SequelizeStatic, sequelize: Sequelize.Sequelize, [x:string]: Sequelize.Model }}
+ */
 const db = {}
 
 const sequelize = config.use_env_variable

@@ -1,12 +1,13 @@
 import { Router } from 'express'
-import models from '~/server/models'
 import autoCatch from 'express-async-handler'
+import models from '~/server/models'
+import makeChecking from '~/server/security/makeChecking'
 
-const c = Router()
+const cardRouter = Router()
 
 const { Card } = models
 
-c.post(
+cardRouter.post(
   '/create',
   autoCatch(async (req, res) => {
     const { text, index, id } = req.body
@@ -20,17 +21,24 @@ c.post(
   })
 )
 
-c.delete(
+const findCardById = makeChecking({
+  Model: Card,
+  paramKey: 'cardId',
+  instKey: 'card',
+  check: (req, card) => req.list.hasCard(card),
+})
+
+const listHasCard = findCardById({
+  attributes: ['id'],
+})
+
+cardRouter.delete(
   '/:cardId/destroy',
+  listHasCard,
   autoCatch(async (req, res) => {
-    await Card.destroy({
-      where: {
-        id: req.params.cardId,
-        listId: req.list.id,
-      },
-    })
-    res.end()
+    await req.card.destroy()
+    res.status(204).end()
   })
 )
 
-export default c
+export default cardRouter

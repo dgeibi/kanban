@@ -2,13 +2,14 @@ import { Router } from 'express'
 import autoCatch from 'express-async-handler'
 import models from '~/server/models'
 import pick from '~/utils/pick'
-import card from './card'
+import makeChecking from '~/server/security/makeChecking'
+import cardRouter from './card'
 
-const r = Router()
+const listRouter = Router()
 
 const { List, Card } = models
 
-r.get(
+listRouter.get(
   '/',
   autoCatch(async (req, res) => {
     const lists = await List.findAll({
@@ -22,7 +23,7 @@ r.get(
   })
 )
 
-r.post(
+listRouter.post(
   '/create',
   autoCatch(async (req, res) => {
     await List.create(
@@ -37,45 +38,37 @@ r.post(
   })
 )
 
-r.get(
-  '/:listId',
-  autoCatch(async (req, res) => {
-    const list = await List.findOne({
-      where: {
-        id: req.params.listId,
-        boardId: req.board.id,
-      },
-      include: [Card],
-      order: [[Card, 'index']],
-    })
-    res.json(list.dataValues)
-  })
-)
-
-r.delete(
-  '/:listId/destroy',
-  autoCatch(async (req, res) => {
-    await List.destroy({
-      where: {
-        id: req.params.listId,
-        boardId: req.board.id,
-      },
-    })
-    res.end()
-  })
-)
-
-const authList = autoCatch(async (req, res, next) => {
-  const list = await List.findById(req.params.listId)
-  const has = await req.board.hasList(list)
-  if (!has) {
-    res.status(403).end()
-  } else {
-    req.list = list
-    next()
-  }
+const findListById = makeChecking({
+  Model: List,
+  paramKey: 'listId',
+  instKey: 'list',
+  check: (req, list) => req.board.hasList(list),
 })
 
-r.use('/:listId/card', authList, card)
+listRouter.get(
+  '/:listId',
+  findListById({
+    include: [Card],
+    order: [[Card, 'index']],
+  }),
+  autoCatch((req, res) => {
+    res.json(req.list.dataValues)
+  })
+)
 
-export default r
+const boardHasList = findListById({
+  attributes: ['id'],
+})
+
+listRouter.delete(
+  '/:listId/destroy',
+  boardHasList,
+  autoCatch(async (req, res) => {
+    await req.list.destroy()
+    res.status(204).end()
+  })
+)
+
+listRouter.use('/:listId/card', boardHasList, cardRouter)
+
+export default listRouter
