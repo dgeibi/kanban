@@ -20,9 +20,9 @@ import { setContainer } from 'dva-hot'
 import { createBrowserHistory } from 'history'
 import Loadable from '@7rulnik/react-loadable'
 
+import createApp from '~/app/createApp'
+import { setToken } from '~/app/utils/request'
 import router from './router'
-import createApp from '../app/createApp'
-import { setToken } from '../app/utils/request'
 import './global.css'
 
 window.__main__ = () => {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Redirect, Switch } from 'dva/router'
 import Loadable from '@7rulnik/react-loadable'
-import Frame from './pages/Frame'
+import Frame from './layouts'
 import Title from './components/Title'
 
 function LoadingComponent(props) {

@@ -9,11 +9,11 @@ import Loadable from '@7rulnik/react-loadable'
 import { renderStylesToString } from 'emotion-server'
 import fse from 'fs-extra'
 import { resetServerContext } from 'react-beautiful-dnd'
-import Root from '../app/Root'
-import createApp from '../app/createApp'
+import Root from '~/app/Root'
+import createApp from '~/app/createApp'
 
 if (process.env.HOT_MODE) {
-  module.hot.accept(['../app/createApp', '../app/Root'])
+  module.hot.accept(['~/app/createApp', '~/app/Root'])
 }
 
 const paths = require('config/paths')
