@@ -8,7 +8,11 @@ export default [
   session({
     secret: process.env.SESSION_KEY,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    },
   }),
   passport.initialize(),
   passport.session(),
