@@ -81,7 +81,7 @@ boardRouter.get(
 boardRouter.patch(
   '/:boardId/reorder',
   userHasBoard,
-  autoCatch(async (req, res) => {
+  autoCatch(async (req, res, next) => {
     const { listOrder } = req.body
     if (!Array.isArray(listOrder)) {
       res.status(400).end()
@@ -89,7 +89,7 @@ boardRouter.patch(
     }
     const transaction = await sequelize.transaction()
     const updateIndex = async (id, index) => {
-      const list = await List.findById(id, { transaction, attributes: [] })
+      const list = await List.findById(id, { transaction, attributes: ['id'] })
       if (!await req.board.hasList(list, { transaction })) {
         throw Error('权限不足')
       }
@@ -103,6 +103,7 @@ boardRouter.patch(
     } catch (e) {
       await transaction.rollback()
       res.status(400).end()
+      next(e)
       return
     }
 
