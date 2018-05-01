@@ -88,9 +88,10 @@ export default autoCatch(async function render(req, res) {
       styles: initialAssets.styles.concat(
         bundles.filter(isStyle).map(selectUrl)
       ),
-      scripts: initialAssets.scripts.concat(
-        bundles.filter(isScript).map(selectUrl)
-      ),
+      scripts: [
+        ...bundles.filter(isScript).map(selectUrl),
+        ...initialAssets.scripts,
+      ],
     }
   }
 
@@ -108,7 +109,6 @@ ${styles.map(x => `<link href="${x}" rel="stylesheet"/>`).join('')}
 <body><div id="root">${appHTML}</div>
 <script id="app-data" type="text/plain">${preloadData}</script>
 ${scripts.map(x => `<script src="${x}"></script>`).join('')}
-<script>window.__main__();delete window.__main__;</script>
 </body>
 </html>`)
 })

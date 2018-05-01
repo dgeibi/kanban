@@ -25,21 +25,19 @@ import { setToken } from '~/app/utils/request'
 import router from './router'
 import './global.css'
 
-window.__main__ = () => {
-  const { token, state } = JSON.parse(
-    window.atob(document.querySelector('#app-data').textContent) || '{}'
-  )
-  setToken(token)
+const { token, state } = JSON.parse(
+  window.atob(document.querySelector('#app-data').textContent) || '{}'
+)
+setToken(token)
 
-  const app = createApp({
-    router,
-    initialState: state,
-    history: createBrowserHistory(),
-  })
+const app = createApp({
+  router,
+  initialState: state,
+  history: createBrowserHistory(),
+})
 
-  Loadable.preloadReady().then(() => {
-    hydrate(createElement(app.start()), setContainer('#root'), () => {
-      Loadable.preloadAll()
-    })
+Loadable.preloadReady().then(() => {
+  hydrate(createElement(app.start()), setContainer('#root'), () => {
+    Loadable.preloadAll()
   })
-}
+})
