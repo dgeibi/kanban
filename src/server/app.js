@@ -1,4 +1,4 @@
-import express from 'express'
+import Router from 'express-promise-router'
 import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import path from 'path'
@@ -15,7 +15,7 @@ import api from './routes/api'
 import fetchClientData from './fetchClientData'
 import render from './render'
 
-const app = express.Router()
+const app = Router()
 
 app.use(bodyParser.json())
 app.use(security)

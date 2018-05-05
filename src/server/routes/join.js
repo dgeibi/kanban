@@ -1,6 +1,5 @@
-import { Router } from 'express'
+import Router from 'express-promise-router'
 import Schema from 'async-validator'
-import autoCatch from 'express-async-handler'
 
 import * as validateRules from '~/app/validation/auth'
 import { unauenticated } from '../security/auth'
@@ -30,7 +29,7 @@ const inputValidate = (req, res, next) => {
   })
 }
 
-const login = autoCatch(async (req, res, next) => {
+const login = async (req, res, next) => {
   const user = await User.create(req.userInput)
   req.login(user, e => {
     if (e) {
@@ -40,7 +39,7 @@ const login = autoCatch(async (req, res, next) => {
       res.json({ username, email })
     }
   })
-})
+}
 
 router.post('/', unauenticated, inputValidate, login)
 

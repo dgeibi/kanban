@@ -1,5 +1,4 @@
-import { Router } from 'express'
-import autoCatch from 'express-async-handler'
+import Router from 'express-promise-router'
 
 import models from '~/server/models'
 import pick from '~/utils/pick'
@@ -10,37 +9,31 @@ const boardRouter = Router()
 
 const { Board, List, Card, sequelize } = models
 
-boardRouter.get(
-  '/',
-  autoCatch(async (req, res) => {
-    const boards = await Board.findAll({
-      where: {
-        userId: req.user.id,
-      },
-    })
-    res.json(boards)
+boardRouter.get('/', async (req, res) => {
+  const boards = await Board.findAll({
+    where: {
+      userId: req.user.id,
+    },
   })
-)
+  res.json(boards)
+})
 
-boardRouter.post(
-  '/create',
-  autoCatch(async (req, res) => {
-    await Board.create(
-      Object.assign(pick(req.body, ['id', 'title', 'lists']), {
-        userId: req.user.id,
-      }),
-      {
-        include: [
-          {
-            model: List,
-            include: [Card],
-          },
-        ],
-      }
-    )
-    res.end()
-  })
-)
+boardRouter.post('/', async (req, res) => {
+  await Board.create(
+    Object.assign(pick(req.body, ['id', 'title', 'lists']), {
+      userId: req.user.id,
+    }),
+    {
+      include: [
+        {
+          model: List,
+          include: [Card],
+        },
+      ],
+    }
+  )
+  res.end()
+})
 
 const findBoardById = makeChecking({
   Model: Board,
@@ -53,14 +46,10 @@ const userHasBoard = findBoardById({
   attributes: ['id'],
 })
 
-boardRouter.delete(
-  '/:boardId/destroy',
-  userHasBoard,
-  autoCatch(async (req, res) => {
-    await req.board.destroy()
-    res.status(204).end()
-  })
-)
+boardRouter.delete('/:boardId', userHasBoard, async (req, res) => {
+  await req.board.destroy()
+  res.status(204).end()
+})
 
 boardRouter.get(
   '/:boardId',
@@ -78,39 +67,35 @@ boardRouter.get(
   }
 )
 
-boardRouter.patch(
-  '/:boardId/reorder',
-  userHasBoard,
-  autoCatch(async (req, res, next) => {
-    const { listOrder } = req.body
-    if (!Array.isArray(listOrder)) {
-      res.status(400).end()
-      return
+boardRouter.patch('/:boardId/reorder', userHasBoard, async (req, res, next) => {
+  const { listOrder } = req.body
+  if (!Array.isArray(listOrder)) {
+    res.status(400).end()
+    return
+  }
+  const transaction = await sequelize.transaction()
+  const updateIndex = async (id, index) => {
+    const list = await List.findById(id, { transaction, attributes: ['id'] })
+    if (!await req.board.hasList(list, { transaction })) {
+      throw Error('权限不足')
     }
-    const transaction = await sequelize.transaction()
-    const updateIndex = async (id, index) => {
-      const list = await List.findById(id, { transaction, attributes: ['id'] })
-      if (!await req.board.hasList(list, { transaction })) {
-        throw Error('权限不足')
-      }
-      await list.update({ index }, { transaction })
-    }
+    await list.update({ index }, { transaction })
+  }
 
-    try {
-      for (let i = 0; i < listOrder.length; i++) {
-        await updateIndex(listOrder[i], i)
-      }
-    } catch (e) {
-      await transaction.rollback()
-      res.status(400).end()
-      next(e)
-      return
+  try {
+    for (let i = 0; i < listOrder.length; i++) {
+      await updateIndex(listOrder[i], i)
     }
+  } catch (e) {
+    await transaction.rollback()
+    res.status(400).end()
+    next(e)
+    return
+  }
 
-    await transaction.commit()
-    res.status(204).end()
-  })
-)
+  await transaction.commit()
+  res.status(204).end()
+})
 
 boardRouter.use('/:boardId/list', userHasBoard, listRouter)
 

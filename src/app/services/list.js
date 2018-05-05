@@ -6,7 +6,7 @@ if (process.env.HOT_MODE) {
 
 export const create = data => {
   const { boardId } = data
-  return request(`/api/board/${boardId}/list/create`, {
+  return request(`/api/board/${boardId}/list`, {
     method: 'POST',
     body: JSON.stringify(data),
   })

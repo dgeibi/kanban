@@ -1,10 +1,9 @@
 import { schema, normalize } from 'normalizr'
-import express from 'express'
-import autoCatch from 'express-async-handler'
+import Router from 'express-promise-router'
 import models from '~/server/models'
 import makeChecking from '~/server/security/makeChecking'
 
-const logined = express.Router()
+const logined = Router()
 
 const { Board, Card, List } = models
 
@@ -27,18 +26,15 @@ logined.get('*', async (req, res, next) => {
   next()
 })
 
-logined.get(
-  '/',
-  autoCatch(async (req, res, next) => {
-    const boards = await Board.findAll({
-      where: {
-        userId: req.user.id,
-      },
-    })
-    Object.assign(req.initialState, normalizeBoards(boards))
-    next()
+logined.get('/', async (req, res, next) => {
+  const boards = await Board.findAll({
+    where: {
+      userId: req.user.id,
+    },
   })
-)
+  Object.assign(req.initialState, normalizeBoards(boards))
+  next()
+})
 
 const findBoardById = makeChecking({
   Model: Board,

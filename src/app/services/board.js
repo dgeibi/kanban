@@ -1,4 +1,4 @@
-import { schema, normalize } from 'normalizr'
+import { normalize, schema } from 'normalizr'
 import request from '../utils/request'
 
 if (process.env.HOT_MODE) {
@@ -6,7 +6,7 @@ if (process.env.HOT_MODE) {
 }
 
 export const create = data =>
-  request('/api/board/create', {
+  request('/api/board', {
     method: 'POST',
     body: JSON.stringify(data),
   })

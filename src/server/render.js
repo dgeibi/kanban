@@ -2,7 +2,6 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'dva/router'
 import { Helmet } from 'react-helmet'
-import autoCatch from 'express-async-handler'
 import { createMemoryHistory } from 'history'
 import { getBundles } from '@7rulnik/react-loadable/webpack'
 import Loadable from '@7rulnik/react-loadable'
@@ -51,7 +50,7 @@ const selectUrl = x => x.publicPath
 const isStyle = x => x.file.endsWith('.css')
 const isScript = x => x.file.endsWith('.js')
 
-export default autoCatch(async function render(req, res) {
+export default async function render(req, res) {
   const { asyncChunksStats, initialAssets } = await manifestsPromise
   const location = req.url
   const modules = []
@@ -111,4 +110,4 @@ ${styles.map(x => `<link href="${x}" rel="stylesheet"/>`).join('')}
 ${scripts.map(x => `<script src="${x}"></script>`).join('')}
 </body>
 </html>`)
-})
+}

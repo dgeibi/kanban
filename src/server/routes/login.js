@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import Router from 'express-promise-router'
 import Schema from 'async-validator'
 import passport from 'passport'
 

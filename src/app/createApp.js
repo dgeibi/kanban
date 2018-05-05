@@ -5,6 +5,7 @@ export default function createApp({ initialState, history, router }) {
   const app = dva({
     initialState,
     history,
+    onError() {},
   })
   hot.patch(app)
   app.model(require('./models/user').default)
