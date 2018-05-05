@@ -1,5 +1,6 @@
 const nodeExternals = require('webpack-node-externals')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = ({ NODE_ENV }) => {
   const PROD_MODE = NODE_ENV === 'production'
@@ -9,6 +10,7 @@ module.exports = ({ NODE_ENV }) => {
       filename: 'server.js',
       chunkFilename: '[id].js',
       libraryTarget: 'commonjs2',
+      devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     },
     devtool: 'source-map',
     node: {
@@ -24,6 +26,12 @@ module.exports = ({ NODE_ENV }) => {
     externals: [
       nodeExternals({
         whitelist: [/^webpack\/hot\//],
+      }),
+    ],
+    plugins: [
+      new webpack.BannerPlugin({
+        raw: true,
+        banner: 'require("source-map-support").install();',
       }),
     ],
     optimization: {
