@@ -21,7 +21,8 @@ import { createBrowserHistory } from 'history'
 import Loadable from '@7rulnik/react-loadable'
 
 import createApp from '~/app/createApp'
-import { setToken } from '~/app/utils/request'
+import { setToken } from '~/app/utils/csrfToken'
+import { connect } from '~/app/utils/socket'
 import router from './router'
 import './global.css'
 
@@ -36,7 +37,7 @@ const app = createApp({
   history: createBrowserHistory(),
 })
 
-Loadable.preloadReady().then(() => {
+Promise.all([connect(), Loadable.preloadReady()]).then(() => {
   hydrate(createElement(app.start()), setContainer('#root'), () => {
     Loadable.preloadAll()
   })

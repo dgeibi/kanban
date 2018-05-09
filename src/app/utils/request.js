@@ -1,10 +1,6 @@
 import fetch from 'unfetch'
-
-let csrfToken
-
-export function setToken(token) {
-  csrfToken = token
-}
+import { getToken } from './csrfToken'
+import { getSocket } from './socket'
 
 function isJSON(res) {
   const ret = res.headers.get('content-type')
@@ -33,18 +29,22 @@ function checkResponse(response) {
  * @return {Promise<object>}
  */
 function request(url, options) {
+  const urlObj = new URL(
+    url.indexOf('://') > 0 ? url : window.location.origin + url
+  )
   options = options || {}
-  const headers = {
-    'CSRF-Token': csrfToken,
-  }
-  if (typeof options.body === 'string') {
-    headers['Content-Type'] = 'application/json'
+  const headers = {}
+  if (options.method && options.method !== 'GET') {
+    urlObj.searchParams.set('sid', getSocket().id)
+    urlObj.searchParams.set('_csrf', getToken())
+    if (typeof options.body === 'string') {
+      headers['Content-Type'] = 'application/json'
+    }
   }
   if (options.headers) {
     Object.assign(headers, options.headers)
   }
-
-  return fetch(url, {
+  return fetch(urlObj.toString(), {
     credentials: 'same-origin',
     ...options,
     headers,

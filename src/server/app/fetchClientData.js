@@ -26,7 +26,7 @@ logined.get('*', async (req, res, next) => {
   next()
 })
 
-logined.get('/', async (req, res, next) => {
+logined.get('*', async (req, res, next) => {
   const boards = await Board.findAll({
     where: {
       userId: req.user.id,
@@ -56,7 +56,10 @@ logined.get(
     order: [[List, 'index'], [List, Card, 'index']],
   }),
   (req, res, next) => {
-    Object.assign(req.initialState, normalizeBoards([req.board]))
+    const { boards } = req.initialState
+    const state = normalizeBoards([req.board])
+    Object.assign(boards, state.boards)
+    Object.assign(req.initialState, state, { boards })
     next()
   }
 )

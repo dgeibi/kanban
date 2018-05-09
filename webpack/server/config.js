@@ -5,7 +5,7 @@ const webpack = require('webpack')
 module.exports = ({ NODE_ENV }) => {
   const PROD_MODE = NODE_ENV === 'production'
   return {
-    entry: ['./src/server/server.js'],
+    entry: ['./src/server/index.js'],
     output: {
       filename: 'server.js',
       chunkFilename: '[id].js',

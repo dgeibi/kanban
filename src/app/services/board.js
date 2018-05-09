@@ -1,5 +1,6 @@
 import { normalize, schema } from 'normalizr'
 import request from '../utils/request'
+import { getSocket } from '../utils/socket'
 
 if (process.env.HOT_MODE) {
   module.hot.accept()
@@ -37,3 +38,7 @@ export const reorder = data =>
     method: 'PATCH',
     body: JSON.stringify(data),
   })
+
+export const subscribe = data => {
+  getSocket().emit('board::subscribe', data)
+}

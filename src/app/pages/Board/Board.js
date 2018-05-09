@@ -102,7 +102,7 @@ export default class Board extends Component {
         type: 'boards/reorder',
         payload: {
           id: board.id,
-          listOrder: ordered,
+          lists: ordered,
         },
       })
 

@@ -3,6 +3,8 @@ import Router from 'express-promise-router'
 import models from '~/server/models'
 import pick from '~/utils/pick'
 import makeChecking from '~/server/security/makeChecking'
+import { io } from '~/server/server'
+
 import listRouter from './list'
 
 const boardRouter = Router()
@@ -68,23 +70,24 @@ boardRouter.get(
 )
 
 boardRouter.patch('/:boardId/reorder', userHasBoard, async (req, res, next) => {
-  const { listOrder } = req.body
-  if (!Array.isArray(listOrder)) {
+  const { board } = req
+  const { lists: listIds } = req.body
+  if (!Array.isArray(listIds)) {
     res.status(400).end()
     return
   }
   const transaction = await sequelize.transaction()
   const updateIndex = async (id, index) => {
     const list = await List.findById(id, { transaction, attributes: ['id'] })
-    if (!await req.board.hasList(list, { transaction })) {
+    if (!await board.hasList(list, { transaction })) {
       throw Error('权限不足')
     }
     await list.update({ index }, { transaction })
   }
 
   try {
-    for (let i = 0; i < listOrder.length; i++) {
-      await updateIndex(listOrder[i], i)
+    for (let i = 0; i < listIds.length; i++) {
+      await updateIndex(listIds[i], i)
     }
   } catch (e) {
     await transaction.rollback()
@@ -94,6 +97,14 @@ boardRouter.patch('/:boardId/reorder', userHasBoard, async (req, res, next) => {
   }
 
   await transaction.commit()
+
+  if (req.query.sid && io.sockets.sockets[req.query.sid]) {
+    io.sockets.sockets[req.query.sid]
+      .to(`board ${board.id}`)
+      .emit('board list-moved', req.body)
+  } else {
+    console.log('sync failed')
+  }
   res.status(204).end()
 })
 

@@ -20,24 +20,44 @@ const Header = styled.div`
 export default connect(({ boards, lists }, { match }) => ({
   board: boards && boards[match.params.board_id],
   lists,
-}))(function BoardPage({ board, dispatch, lists }) {
-  if (!board) return <Redirect to="/" />
-  if (!board.lists) {
-    dispatch({
-      type: 'boards/fetch',
-      id: board.id,
-    })
-  }
-  const { title } = board
+}))(
+  class BoardPage extends React.Component {
+    componentDidMount() {
+      const { board, dispatch } = this.props
+      if (!board.lists) {
+        dispatch({
+          type: 'boards/fetch',
+          payload: {
+            id: board.id,
+          },
+        })
+      }
+      if (!board.subscribed) {
+        dispatch({
+          type: 'boards/subscribe',
+          payload: {
+            id: board.id,
+          },
+        })
+      }
+    }
 
-  return (
-    <>
-      <Header>
-        <h3>{title}</h3>
-      </Header>
-      <Wrapper>
-        <Board dispatch={dispatch} board={board} lists={lists} />
-      </Wrapper>
-    </>
-  )
-})
+    render() {
+      const { board, dispatch, lists } = this.props
+      if (!board) return <Redirect to="/" />
+      return (
+        <>
+          <Header>
+            <h3>{board.title}</h3>
+          </Header>
+          <Wrapper>
+            {board.lists &&
+              board.lists.length > 0 && (
+                <Board dispatch={dispatch} board={board} lists={lists} />
+              )}
+          </Wrapper>
+        </>
+      )
+    }
+  }
+)

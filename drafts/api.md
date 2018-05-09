@@ -1,52 +1,33 @@
-token 放在 cookie 用于维持登陆
+## Rest
 
-
-
-
-Board
-
-不要直接用 GET，GET 也会带上cookie，`<a href="/board/1/delete" >x</a>`
-
-https://www.ibm.com/developerworks/cn/web/1102_niugang_csrf/
-
-/board/1/delete?token=
-
-长轮询 GET /board/:board_id?version=x
-
-获取：GET /api/board/:board_id
-- boardVersion: STRING
+### Board
 
 创建：POST /api/board
-更新：PUT /api/board/:board_id
+获取：GET /api/board/:board_id
 删除：DELETE /api/board/:board_id
-<!-- 部分更新：PATCH /tickets/12 -->
 
-List
+### List
 
-POST   /api/board/:board_id/list/:list_id
-DELETE /api/board/:board_id/list/:list_id
+创建：POST /api/board/:board_id/list
+获取：GET /api/board/:board_id/list/:list_id
+删除：DELETE /api/board/:board_id/list/:list_id
 
-# req field
+### Card
 
-- currentBoardVersion: STRING
+创建：POST /api/board/:board_id/list/:list_id/card
+获取：GET /api/board/:board_id/list/:list_id/card/:card_id
+删除：DELETE /api/board/:board_id/list/:list_id/card/:card_id
 
-# res field
+## SocketIO
 
-- needUpdate: BOOLEAN
+https://github.com/PlatziDev/socket.io-redux/blob/master/lib/index.js
+https://github.com/alexjg/redux-effects-socketio
 
-修改 patch
+`board list-moved`
 
-整个 list 更新吗？ 不
+* param.id `boardId`
+* param.lists `Array<listId>`
 
-要建立一个card table
+`list updated`
 
-修改card属性/内容
-增加card
-移动card
-card 有 order index
-
-修改 list 的
-title
-位置
-
-Get /auth/
+`list card-moved` param 要有 boardId

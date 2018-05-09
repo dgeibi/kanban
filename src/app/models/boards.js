@@ -1,7 +1,25 @@
 import { model } from 'dva-hot'
 import nanoid from 'nanoid'
 
-import { create, fetchAll, fetchLists, reorder } from '~/app/services/board'
+import * as services from '~/app/services/board'
+import { subscribe } from '~/app/utils/socket'
+
+const handlers = {
+  'board list-moved': (socket, dispatch, data) =>
+    dispatch({
+      type: 'patchBoard',
+      payload: data,
+    }),
+  'board subscribed': (socket, dispatch, data) => {
+    dispatch({
+      type: 'patchBoard',
+      payload: {
+        id: data.id,
+        subscribed: true,
+      },
+    })
+  },
+}
 
 export default model(module)({
   namespace: 'boards',
@@ -9,19 +27,6 @@ export default model(module)({
   reducers: {
     save(state, { payload }) {
       return { ...state, ...payload }
-    },
-    updateListOrder(
-      state,
-      {
-        payload: { id, listOrder },
-      }
-    ) {
-      const boards = { ...state }
-      const board = { ...boards[id] }
-      board.lists = listOrder
-      boards[id] = board
-
-      return boards
     },
     addList(state, { listId, id }) {
       const boards = { ...state }
@@ -51,18 +56,24 @@ export default model(module)({
           [data.id]: data,
         },
       })
-      yield call(create, data)
+      yield call(services.create, data)
     },
+
     *fetchAll(action, { call, put }) {
-      const data = yield call(fetchAll)
+      const data = yield call(services.fetchAll)
       yield put({
         type: 'save',
         payload: data.boards,
       })
     },
 
-    *fetch({ id }, { call, put, select }) {
-      const { result, entities } = yield call(fetchLists, id)
+    *fetch(
+      {
+        payload: { id },
+      },
+      { call, put, select }
+    ) {
+      const { result, entities } = yield call(services.fetchLists, id)
       const board = yield select(x => x.boards[id])
 
       yield put({
@@ -83,12 +94,33 @@ export default model(module)({
         payload: entities.cards,
       })
     },
+
     *reorder({ payload }, { call, put }) {
       yield put({
-        type: 'updateListOrder',
+        type: 'patchBoard',
         payload,
       })
-      yield call(reorder, payload)
+      yield call(services.reorder, payload)
     },
+
+    *subscribe({ payload }, { call }) {
+      yield call(services.subscribe, payload)
+    },
+
+    *patchBoard({ payload }, { select, put }) {
+      const board = yield select(x => x.boards[payload.id])
+      yield put({
+        type: 'save',
+        payload: {
+          [payload.id]: {
+            ...board,
+            ...payload,
+          },
+        },
+      })
+    },
+  },
+  subscriptions: {
+    socket: ({ dispatch }) => subscribe(handlers, dispatch),
   },
 })

@@ -3,7 +3,7 @@ import Schema from 'async-validator'
 import passport from 'passport'
 
 import * as validateRules from '~/app/validation/auth'
-import { unauenticated } from '../security/auth'
+import { unauenticated } from '~/server/security/auth'
 
 const login = Router()
 

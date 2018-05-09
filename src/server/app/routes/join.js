@@ -2,9 +2,8 @@ import Router from 'express-promise-router'
 import Schema from 'async-validator'
 
 import * as validateRules from '~/app/validation/auth'
-import { unauenticated } from '../security/auth'
-
-import models from '../models'
+import { unauenticated } from '~/server/security/auth'
+import models from '~/server/models'
 
 const { User } = models
 

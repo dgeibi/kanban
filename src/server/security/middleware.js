@@ -1,10 +1,11 @@
 import passport from 'passport'
 import session from 'express-session'
 import csurf from 'csurf'
+import wrapMiddlewares from '~/server/utils/wrapMiddlewares'
 
 import './initPassport'
 
-export default [
+export default wrapMiddlewares([
   session({
     secret: process.env.SESSION_KEY,
     resave: false,
@@ -17,4 +18,4 @@ export default [
   passport.initialize(),
   passport.session(),
   csurf(),
-]
+])

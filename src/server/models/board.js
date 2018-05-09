@@ -26,5 +26,11 @@ export default function(sequelize) {
       },
     })
   }
+  Board.findAndCheck = (id, user) =>
+    Board.findById(id, {
+      attributes: ['id'],
+    })
+      .then(board => user.hasBoard(board))
+      .catch(() => false)
   return Board
 }
