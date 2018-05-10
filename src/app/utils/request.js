@@ -35,7 +35,10 @@ function request(url, options) {
   options = options || {}
   const headers = {}
   if (options.method && options.method !== 'GET') {
-    urlObj.searchParams.set('sid', getSocket().id)
+    const socket = getSocket()
+    if (socket && socket.id) {
+      urlObj.searchParams.set('sid', socket.id)
+    }
     urlObj.searchParams.set('_csrf', getToken())
     if (typeof options.body === 'string') {
       headers['Content-Type'] = 'application/json'

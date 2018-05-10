@@ -19,6 +19,9 @@ const handlers = {
       },
     })
   },
+  'board subscribe failed': () => {
+    console.error('subscribe failed')
+  },
 }
 
 export default model(module)({

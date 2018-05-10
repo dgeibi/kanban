@@ -37,7 +37,7 @@ const app = createApp({
   history: createBrowserHistory(),
 })
 
-Promise.all([connect(), Loadable.preloadReady()]).then(() => {
+Promise.all([state.user && connect(), Loadable.preloadReady()]).then(() => {
   hydrate(createElement(app.start()), setContainer('#root'), () => {
     Loadable.preloadAll()
   })

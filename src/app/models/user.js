@@ -1,5 +1,6 @@
 import { message } from 'antd'
 import { model } from 'dva-hot'
+import { connect } from '~/app/utils/socket'
 import { join, login, logout } from '../services/user'
 
 export default model(module)({
@@ -17,6 +18,7 @@ export default model(module)({
     },
     *join({ payload: info }, { call, put }) {
       const data = yield call(join, info)
+      yield call(connect)
       yield put({
         type: 'save',
         payload: data,
@@ -29,6 +31,7 @@ export default model(module)({
       } catch (e) {
         message.error('登录失败，请检查你的用户名和密码')
       }
+      yield call(connect)
       if (data) {
         yield put({
           type: 'boards/fetchAll',
