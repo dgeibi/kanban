@@ -103,7 +103,8 @@ export default async function render(req, res) {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ${helmet.title.toString()}
-${styles.map(x => `<link href="${x}" rel="stylesheet"/>`).join('')}
+${styles.map(x => `<link href="${x}" rel="stylesheet">`).join('')}
+${scripts.map(x => `<link href="${x}" rel="preload" as="script">`).join('')}
 </head>
 <body><div id="root">${appHTML}</div>
 <script id="app-data" type="text/plain">${preloadData}</script>
