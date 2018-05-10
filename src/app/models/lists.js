@@ -1,25 +1,11 @@
 import { model } from 'dva-hot'
 import nanoid from 'nanoid'
 import { create } from '~/app/services/list'
+import commonModel from '~/app/utils/commonModel'
 
-export default model(module)({
-  namespace: 'lists',
+const listModel = commonModel('lists')({
   state: {},
   reducers: {
-    save(state, { payload }) {
-      return { ...state, ...payload }
-    },
-    reorderCards(state, { payload: cardOrders }) {
-      const lists = { ...state }
-
-      Object.keys(cardOrders).forEach(id => {
-        const list = { ...lists[id] }
-        list.cards = cardOrders[id]
-        lists[id] = list
-      })
-
-      return lists
-    },
     addCard(state, { cardId, id }) {
       const lists = { ...state }
       const list = { ...lists[id] }
@@ -61,5 +47,14 @@ export default model(module)({
         index,
       })
     },
+
+    *reorderCards({ payload }, { put }) {
+      yield put({
+        type: 'patchPartial',
+        payload,
+      })
+    },
   },
 })
+
+export default model(module)(listModel)

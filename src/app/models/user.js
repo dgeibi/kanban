@@ -7,7 +7,7 @@ export default model(module)({
   namespace: 'user',
   state: null,
   reducers: {
-    save(state, { payload }) {
+    replace(state, { payload }) {
       return payload
     },
   },
@@ -20,7 +20,7 @@ export default model(module)({
       const data = yield call(join, info)
       yield call(connect)
       yield put({
-        type: 'save',
+        type: 'replace',
         payload: data,
       })
     },
@@ -37,7 +37,7 @@ export default model(module)({
           type: 'boards/fetchAll',
         })
         yield put({
-          type: 'save',
+          type: 'replace',
           payload: data,
         })
       }

@@ -28,6 +28,7 @@
     "debug": "^3.1.0",
     "dva": "^2.2.3",
     "dva-hot": "^0.2.2",
+    "dva-model-extend": "^0.1.2",
     "emotion": "^9.1.2",
     "emotion-server": "^9.1.2",
     "express": "^4.16.3",

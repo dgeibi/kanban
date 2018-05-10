@@ -14,19 +14,25 @@ export const reorderInner = ({ data, source, destination, key }) => {
       destination.index
     )
     return {
-      [source.droppableId]: reordered,
+      [source.droppableId]: {
+        [key]: reordered,
+      },
     }
   }
 
-  const current = [...data[source.droppableId][key]]
-  const next = [...data[destination.droppableId][key]]
+  const from = [...data[source.droppableId][key]]
+  const to = [...data[destination.droppableId][key]]
 
-  const target = current[source.index]
-  current.splice(source.index, 1)
-  next.splice(destination.index, 0, target)
+  const target = from[source.index]
+  from.splice(source.index, 1)
+  to.splice(destination.index, 0, target)
 
   return {
-    [source.droppableId]: current,
-    [destination.droppableId]: next,
+    [source.droppableId]: {
+      [key]: from,
+    },
+    [destination.droppableId]: {
+      [key]: to,
+    },
   }
 }

@@ -1,15 +1,11 @@
 import { model } from 'dva-hot'
 import nanoid from 'nanoid'
 import { create } from '~/app/services/card'
+import commonModel from '~/app/utils/commonModel'
 
-export default model(module)({
-  namespace: 'cards',
+const cardModel = commonModel('cards')({
   state: {},
-  reducers: {
-    save(state, { payload }) {
-      return { ...state, ...payload }
-    },
-  },
+  reducers: {},
   effects: {
     *create(
       {
@@ -42,3 +38,5 @@ export default model(module)({
     },
   },
 })
+
+export default model(module)(cardModel)

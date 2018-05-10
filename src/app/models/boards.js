@@ -1,18 +1,18 @@
 import { model } from 'dva-hot'
 import nanoid from 'nanoid'
-
+import commonModel from '~/app/utils/commonModel'
 import * as services from '~/app/services/board'
 import { subscribe } from '~/app/utils/socket'
 
 const handlers = {
   'board list-moved': (socket, dispatch, data) =>
     dispatch({
-      type: 'patchBoard',
+      type: 'patchItem',
       payload: data,
     }),
   'board subscribed': (socket, dispatch, data) => {
     dispatch({
-      type: 'patchBoard',
+      type: 'patchItem',
       payload: {
         id: data.id,
         subscribed: true,
@@ -24,13 +24,9 @@ const handlers = {
   },
 }
 
-export default model(module)({
-  namespace: 'boards',
+const boardModel = commonModel('boards')({
   state: {},
   reducers: {
-    save(state, { payload }) {
-      return { ...state, ...payload }
-    },
     addList(state, { listId, id }) {
       const boards = { ...state }
       const board = { ...boards[id] }
@@ -100,7 +96,7 @@ export default model(module)({
 
     *reorder({ payload }, { call, put }) {
       yield put({
-        type: 'patchBoard',
+        type: 'patchItem',
         payload,
       })
       yield call(services.reorder, payload)
@@ -109,21 +105,10 @@ export default model(module)({
     *subscribe({ payload }, { call }) {
       yield call(services.subscribe, payload)
     },
-
-    *patchBoard({ payload }, { select, put }) {
-      const board = yield select(x => x.boards[payload.id])
-      yield put({
-        type: 'save',
-        payload: {
-          [payload.id]: {
-            ...board,
-            ...payload,
-          },
-        },
-      })
-    },
   },
   subscriptions: {
     socket: ({ dispatch }) => subscribe(handlers, dispatch),
   },
 })
+
+export default model(module)(boardModel)
