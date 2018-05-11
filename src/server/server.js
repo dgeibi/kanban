@@ -21,6 +21,7 @@ io.use((socket, next) => {
 })
 
 io.sockets.on('connection', socket => {
+  socket.join(`user ${socket.request.user.id}`)
   Object.keys(socketHandlers).forEach(channel => {
     socket.on(channel, data => {
       socketHandlers[channel]({ socket, io }, data)

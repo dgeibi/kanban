@@ -47,13 +47,6 @@ const listModel = commonModel('lists')({
         index,
       })
     },
-
-    *reorderCards({ payload }, { put }) {
-      yield put({
-        type: 'patchPartial',
-        payload,
-      })
-    },
   },
 })
 

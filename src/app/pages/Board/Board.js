@@ -99,7 +99,7 @@ export default class Board extends Component {
       )
 
       this.props.dispatch({
-        type: 'boards/reorder',
+        type: 'boards/reorderLists',
         payload: {
           id: board.id,
           lists: ordered,
@@ -109,7 +109,7 @@ export default class Board extends Component {
       return
     }
 
-    const cardOrders = reorderInner({
+    const patches = reorderInner({
       data: lists,
       key: 'cards',
       source,
@@ -117,8 +117,11 @@ export default class Board extends Component {
     })
 
     dispatch({
-      type: 'lists/reorderCards',
-      payload: cardOrders,
+      type: 'boards/reorderCards',
+      payload: {
+        id: board.id,
+        patches,
+      },
     })
   }
 

@@ -33,10 +33,16 @@ export const fetchAll = () =>
     return normalize(data, [board]).entities
   })
 
-export const reorder = data =>
-  request(`/api/board/${data.id}/reorder`, {
+export const reorderLists = data =>
+  request(`/api/board/${data.id}/reorderLists`, {
     method: 'PATCH',
     body: JSON.stringify(data),
+  })
+
+export const reorderCards = ({ id, patches }) =>
+  request(`/api/board/${id}/reorderCards`, {
+    method: 'PATCH',
+    body: JSON.stringify(patches),
   })
 
 export const subscribe = data => {

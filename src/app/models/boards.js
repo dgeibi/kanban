@@ -10,6 +10,7 @@ const handlers = {
       type: 'patchItem',
       payload: data,
     }),
+
   'board subscribed': (socket, dispatch, data) => {
     dispatch({
       type: 'patchItem',
@@ -19,6 +20,13 @@ const handlers = {
       },
     })
   },
+
+  'board card-moved': (socket, dispatch, patches) =>
+    dispatch({
+      type: 'lists/patchPartial',
+      payload: patches,
+    }),
+
   'board subscribe failed': () => {
     console.error('subscribe failed')
   },
@@ -94,12 +102,22 @@ const boardModel = commonModel('boards')({
       })
     },
 
-    *reorder({ payload }, { call, put }) {
+    *reorderLists({ payload }, { call, put }) {
       yield put({
         type: 'patchItem',
         payload,
       })
-      yield call(services.reorder, payload)
+      yield call(services.reorderLists, payload)
+    },
+
+    *reorderCards({ payload }, { put, call }) {
+      const { patches } = payload
+
+      yield put({
+        type: 'lists/patchPartial',
+        payload: patches,
+      })
+      yield call(services.reorderCards, payload)
     },
 
     *subscribe({ payload }, { call }) {
