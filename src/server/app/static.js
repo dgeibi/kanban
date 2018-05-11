@@ -5,14 +5,15 @@ const prepareStatic = () => {
   if (process.env.HOT_MODE) {
     const config = require('config/client')({ hot: true }).toConfigSync()
     const hotPath = `${publicPath}__webpack_hmr`
-    config.entry = [
+    const prependEntry = require('config/prependEntry')
+    config.entry = prependEntry(config.entry, [
       'eventsource/lib/eventsource-polyfill.js',
       `webpack-hot-middleware/client?reload=true&path=${hotPath}`,
-    ].concat(config.entry)
+    ])
     const hot = {
       path: hotPath,
     }
-    const webpackMiddleware = require('./webpackMiddleware')
+    const webpackMiddleware = require('config/webpackMiddleware')
     return webpackMiddleware({
       publicPath,
       outputPath,

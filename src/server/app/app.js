@@ -3,16 +3,16 @@ import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import path from 'path'
 
-import login from '~/server/app/routes/login'
 import security from '~/server/security/middleware'
 import { auenticated } from '~/server/security/auth'
 
-import logout from '~/server/app/routes/logout'
-import join from '~/server/app/routes/join'
-import api from '~/server/app/routes/api'
+import login from './routes/login'
+import logout from './routes/logout'
+import join from './routes/join'
+import api from './routes/api'
 
-import fetchClientData from '~/server/app/fetchClientData'
-import render from '~/server/render'
+import fetchClientData from './fetchClientData'
+import render from './render'
 
 const app = Router()
 

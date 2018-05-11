@@ -12,5 +12,14 @@
         "config": "./webpack/parts/resolve.part.js"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["webpack/**/*.js"],
+      "rules": {
+        "no-console": "off",
+        "import/no-extraneous-dependencies": "off"
+      }
+    }
+  ]
 }

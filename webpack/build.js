@@ -9,10 +9,8 @@ module.exports = options => {
     NODE_ENV: options.env,
   }).toConfigSync()
 
-  const config = [serverConfig, clientConfig]
-
   const build = () =>
-    runWebpack(config).then(stats => {
+    runWebpack([serverConfig, clientConfig]).then(stats => {
       console.log(
         stats.toString({
           chunks: false,

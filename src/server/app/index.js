@@ -1,7 +1,7 @@
 import express from 'express'
 import logger from 'morgan'
 import Loadable from '@7rulnik/react-loadable'
-import prepareStatic from '~/server/prepareStatic'
+import prepareStatic from './static'
 
 import handleError from './handleError'
 import appRouter from './app'

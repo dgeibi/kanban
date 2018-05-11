@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const execa = require('execa')
+const prependEntry = require('./prependEntry')
 
 module.exports = () => {
   const config = require('./server')({ hot: true }).toConfigSync()
@@ -13,9 +14,7 @@ module.exports = () => {
       running = false
     })
   }
-
-  config.entry.unshift('webpack/hot/poll.js?1000')
-
+  config.entry = prependEntry(config.entry, 'webpack/hot/poll.js?1000')
   const compiler = webpack(config)
   compiler.watch(
     {
