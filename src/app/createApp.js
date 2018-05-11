@@ -1,11 +1,14 @@
 import dva from 'dva'
 import hot from 'dva-hot'
+import { message } from 'antd'
 
 export default function createApp({ initialState, history, router }) {
   const app = dva({
     initialState,
     history,
-    onError() {},
+    onError() {
+      message.error('出错了')
+    },
   })
   hot.patch(app)
   app.model(require('./models/user').default)

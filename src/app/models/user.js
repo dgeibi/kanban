@@ -17,28 +17,32 @@ export default model(module)({
       window.location.pathname = '/'
     },
     *join({ payload: info }, { call, put }) {
-      const data = yield call(join, info)
-      yield call(connect)
-      yield put({
-        type: 'replace',
-        payload: data,
-      })
+      try {
+        const userMeta = yield call(join, info)
+        yield call(connect)
+        yield put({
+          type: 'replace',
+          payload: userMeta,
+        })
+      } catch (e) {
+        message.error('注册失败')
+      }
     },
     *login({ payload: info }, { call, put }) {
-      let data
+      let userMeta
       try {
-        data = yield call(login, info)
+        userMeta = yield call(login, info)
       } catch (e) {
         message.error('登录失败，请检查你的用户名和密码')
       }
-      yield call(connect)
-      if (data) {
+      if (userMeta) {
+        yield call(connect)
         yield put({
           type: 'boards/fetchAll',
         })
         yield put({
           type: 'replace',
-          payload: data,
+          payload: userMeta,
         })
       }
     },

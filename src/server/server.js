@@ -28,10 +28,10 @@ io.sockets.on('connection', socket => {
   })
 })
 
-const debug = makeDebug('server')
+const debug = makeDebug('app:server')
 
 server.on('listening', () => {
   const addr = server.address()
-  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`
-  debug(`Listening on ${bind}`)
+  debug('host: %s, port: %s', addr.address, addr.port)
+  debug(`Open in browser: http://127.0.0.1:${addr.port}`)
 })

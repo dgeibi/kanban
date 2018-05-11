@@ -10,6 +10,12 @@ module.exports = () => {
     running = true
     execa('node', ['./dist/server.js'], {
       stdio: 'inherit',
+      env: Object.assign(
+        {
+          DEBUG: 'app:*',
+        },
+        process.env
+      ),
     }).on('exit', () => {
       running = false
     })

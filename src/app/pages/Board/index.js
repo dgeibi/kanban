@@ -51,10 +51,7 @@ export default connect(({ boards, lists }, { match }) => ({
             <h3>{board.title}</h3>
           </Header>
           <Wrapper>
-            {board.lists &&
-              board.lists.length > 0 && (
-                <Board dispatch={dispatch} board={board} lists={lists} />
-              )}
+            <Board dispatch={dispatch} board={board} lists={lists} />
           </Wrapper>
         </>
       )

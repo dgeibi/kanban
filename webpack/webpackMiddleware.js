@@ -42,16 +42,15 @@ module.exports = function webpackMiddleware({
   dev = {},
 }) {
   const compiler = webpack(normalizeConfig(config))
-  const middlewares = [
-    webpackDevMiddleware(compiler, {
-      publicPath,
-      ...dev,
-    }),
-    webpackHotMiddleware(compiler, hot),
-  ]
+  const devInst = webpackDevMiddleware(compiler, {
+    publicPath,
+    ...dev,
+  })
+  const middlewares = [devInst, webpackHotMiddleware(compiler, hot)]
   if (historyApiFallback) {
     middlewares.push(historyApi({ ...historyApiFallback, compiler }))
   }
+  const untilValid = new Promise(res => devInst.waitUntilValid(res))
 
   const webpackDevFull = (req, res, next) => {
     if (publicPath && req.url.indexOf(publicPath) !== 0) {
@@ -74,5 +73,6 @@ module.exports = function webpackMiddleware({
     }
   }
   webpackDevFull.compiler = compiler
+  webpackDevFull.untilValid = untilValid
   return webpackDevFull
 }

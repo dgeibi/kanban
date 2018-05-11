@@ -1,11 +1,13 @@
 export const development = {
   dialect: 'sqlite',
   storage: './db.development.sqlite',
+  logging: false,
 }
 
 export const test = {
   dialect: 'sqlite',
   storage: ':memory:',
+  logging: false,
 }
 
 export const production = process.env.DB_NAME
@@ -15,5 +17,6 @@ export const production = process.env.DB_NAME
       database: process.env.DB_NAME,
       host: process.env.DB_HOSTNAME,
       dialect: 'mysql',
+      logging: false,
     }
   : development

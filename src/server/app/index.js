@@ -1,15 +1,17 @@
 import express from 'express'
 import logger from 'morgan'
 import Loadable from '@7rulnik/react-loadable'
-import prepareStatic from './static'
+import { addTask } from '~/server/tasks'
 
+import prepareStatic from './static'
 import handleError from './handleError'
 import appRouter from './app'
 
 const app = express()
 
-// eslint-disable-next-line import/no-mutable-exports
-export let preloadPromise = Loadable.preloadAll()
+let preloadPromise = Loadable.preloadAll()
+
+addTask(preloadPromise)
 
 app.use(logger('dev'))
 app.use(prepareStatic())

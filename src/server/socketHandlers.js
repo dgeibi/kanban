@@ -2,7 +2,7 @@ import makeDebug from 'debug'
 import db from './models'
 
 const { Board } = db
-const debug = makeDebug('socket')
+const debug = makeDebug('app:socket')
 
 export default {
   'board::subscribe': async ({ socket }, data) => {

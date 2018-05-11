@@ -1,4 +1,5 @@
 import express from 'express'
+import { addTask } from '~/server/tasks'
 
 const prepareStatic = () => {
   const { publicPath, outputPath } = require('config/paths')
@@ -14,12 +15,14 @@ const prepareStatic = () => {
       path: hotPath,
     }
     const webpackMiddleware = require('config/webpackMiddleware')
-    return webpackMiddleware({
+    const middleware = webpackMiddleware({
       publicPath,
       outputPath,
       config,
       hot,
     })
+    addTask(middleware.untilValid)
+    return middleware
   }
   return express.Router().use(publicPath, express.static(outputPath))
 }
