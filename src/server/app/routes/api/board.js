@@ -1,7 +1,7 @@
 import Router from 'express-promise-router'
 
+import { pick } from 'lodash'
 import models from '~/server/models'
-import pick from '~/utils/pick'
 import makeChecking from '~/server/security/makeChecking'
 import { io } from '~/server/server'
 

@@ -1,6 +1,6 @@
 import Router from 'express-promise-router'
 import models from '~/server/models'
-import pick from '~/utils/pick'
+import { pick } from 'lodash'
 import makeChecking from '~/server/security/makeChecking'
 import cardRouter from './card'
 
