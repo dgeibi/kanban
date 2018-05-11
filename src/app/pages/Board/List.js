@@ -15,15 +15,13 @@ function Cards({ cardOrder, cards }) {
   return cardOrder
     ? cardOrder.map((key, index) => (
         <Draggable key={key} draggableId={key} index={index}>
-          {(dragProvided, dragSnapshot) =>
-            cards[key] && (
-              <Card
-                card={cards[key]}
-                isDragging={dragSnapshot.isDragging}
-                provided={dragProvided}
-              />
-            )
-          }
+          {(dragProvided, dragSnapshot) => (
+            <Card
+              card={cards[key]}
+              isDragging={dragSnapshot.isDragging}
+              provided={dragProvided}
+            />
+          )}
         </Draggable>
       ))
     : null

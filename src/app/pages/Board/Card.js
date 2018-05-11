@@ -68,7 +68,7 @@ export default class Card extends React.PureComponent {
         {...provided.dragHandleProps}
       >
         <Content>
-          <BlockQuote>{card.text}</BlockQuote>
+          <BlockQuote>{card && card.text}</BlockQuote>
         </Content>
       </Container>
     )
