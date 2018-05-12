@@ -1,7 +1,7 @@
-import { createServer } from 'http'
 import makeDebug from 'debug'
+import { createServer } from 'http'
 import socketIO from 'socket.io'
-import security from '~/server/security/middleware'
+import { security } from '~/server/security'
 import app from './app'
 import socketHandlers from './socketHandlers'
 

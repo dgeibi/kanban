@@ -1,11 +1,9 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
-
 import isEmail from 'validator/lib/isEmail'
 import normalizeEmail from 'validator/lib/normalizeEmail'
 import { bcompare } from '~/server/helper'
-
-import models from '../models'
+import models from '~/server/models'
 
 const { User } = models
 

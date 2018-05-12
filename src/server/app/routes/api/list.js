@@ -1,7 +1,7 @@
 import Router from 'express-promise-router'
 import models from '~/server/models'
 import { pick } from 'lodash'
-import makeChecking from '~/server/security/makeChecking'
+import { makeChecking } from '~/server/security'
 import cardRouter from './card'
 
 const listRouter = Router()

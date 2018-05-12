@@ -2,10 +2,7 @@ import Router from 'express-promise-router'
 import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import path from 'path'
-
-import security from '~/server/security/middleware'
-import { auenticated } from '~/server/security/auth'
-
+import { security, auenticated } from '~/server/security'
 import login from './routes/login'
 import logout from './routes/logout'
 import join from './routes/join'

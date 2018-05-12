@@ -2,7 +2,7 @@ import Router from 'express-promise-router'
 
 import { pick, isPlainObject } from 'lodash'
 import models from '~/server/models'
-import makeChecking from '~/server/security/makeChecking'
+import { makeChecking } from '~/server/security'
 
 import listRouter from './list'
 

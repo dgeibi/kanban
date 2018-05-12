@@ -1,7 +1,7 @@
 import { schema, normalize } from 'normalizr'
 import Router from 'express-promise-router'
 import models from '~/server/models'
-import makeChecking from '~/server/security/makeChecking'
+import { makeChecking } from '~/server/security'
 
 const logined = Router()
 
