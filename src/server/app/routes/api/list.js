@@ -20,15 +20,17 @@ listRouter.get('/', async (req, res) => {
 })
 
 listRouter.post('/', async (req, res) => {
-  await List.create(
-    Object.assign(pick(req.body, ['id', 'index', 'title', 'cards']), {
-      boardId: req.board.id,
-    }),
+  const list = Object.assign(
+    pick(req.body, ['id', 'index', 'title', 'cards']),
     {
-      include: [Card],
+      boardId: req.board.id,
     }
   )
+  await List.create(list, {
+    include: [Card],
+  })
   res.end()
+  req.toBoard('list created', list)
 })
 
 const findListById = makeChecking({
@@ -56,6 +58,10 @@ const boardHasList = findListById({
 listRouter.delete('/:listId', boardHasList, async (req, res) => {
   await req.list.destroy()
   res.status(204).end()
+  req.toBoard('list removed', {
+    boardId: req.board.id,
+    listId: req.list.id,
+  })
 })
 
 listRouter.use('/:listId/card', boardHasList, cardRouter)

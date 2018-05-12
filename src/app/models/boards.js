@@ -32,6 +32,22 @@ const handlers = {
   'board subscribe failed': () => {
     console.error('subscribe failed')
   },
+
+  'board created': (socket, dispatch, data) => {
+    dispatch({
+      type: 'save',
+      payload: {
+        [data.id]: data,
+      },
+    })
+  },
+
+  'board removed': (socket, dispatch, id) => {
+    dispatch({
+      type: 'rm',
+      payload: id,
+    })
+  },
 }
 
 const boardModel = commonModel('boards')({

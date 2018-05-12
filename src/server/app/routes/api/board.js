@@ -33,6 +33,7 @@ boardRouter.post('/', async (req, res) => {
       ],
     }
   )
+  req.toUser('board created', req.body)
   res.end()
 })
 
@@ -50,6 +51,7 @@ const userHasBoard = findBoardById({
 boardRouter.delete('/:boardId', userHasBoard, async (req, res) => {
   await req.board.destroy()
   res.status(204).end()
+  req.toUser('board removed', req.board.id)
 })
 
 boardRouter.get(
@@ -139,15 +141,12 @@ boardRouter.patch(
       }
     } catch (e) {
       await transaction.rollback()
-      console.log(patches)
       res.status(400).end()
       next(e)
       return
     }
     await transaction.commit()
-    if (req.ioSocket) {
-      req.ioSocket.to(`board ${board.id}`).emit('board card-moved', patches)
-    }
+    req.toBoard('board card-moved', patches)
     res.status(204).end()
   }
 )
@@ -178,9 +177,7 @@ boardRouter.patch(
     }
 
     await transaction.commit()
-    if (req.ioSocket) {
-      req.ioSocket.to(`board ${board.id}`).emit('board list-moved', req.body)
-    }
+    req.toBoard('board list-moved', req.body)
     res.status(204).end()
   }
 )

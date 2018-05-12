@@ -7,6 +7,8 @@ const api = Router()
 
 const logger = debug('app:api')
 
+const noop = () => {}
+
 api.use(
   '/board',
   function bindSocket(req, res, next) {
@@ -19,6 +21,17 @@ api.use(
       } else {
         logger('socket-io binding failed - socket id: %s', sid)
       }
+      req.toBoard = socket
+        ? function toBoard(channel, data) {
+            if (!req.board || !req.board.id) return
+            socket.to(`board ${req.board.id}`).emit(channel, data)
+          }
+        : noop
+      req.toUser = socket
+        ? function toUser(channel, data) {
+            socket.to(`user ${req.user.id}`).emit(channel, data)
+          }
+        : noop
     }
     next()
   },

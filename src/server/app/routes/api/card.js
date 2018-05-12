@@ -16,6 +16,7 @@ cardRouter.post('/', async (req, res) => {
     listId: req.list.id,
   })
   res.end()
+  req.toBoard('card created', req.body)
 })
 
 const findCardById = makeChecking({
@@ -32,6 +33,10 @@ const listHasCard = findCardById({
 cardRouter.delete('/:cardId', listHasCard, async (req, res) => {
   await req.card.destroy()
   res.status(204).end()
+  req.toBoard('card removed', {
+    cardId: req.card.id,
+    listId: req.list.id,
+  })
 })
 
 export default cardRouter

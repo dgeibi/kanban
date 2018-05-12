@@ -3,9 +3,28 @@ import nanoid from 'nanoid'
 import produce from 'immer'
 import * as services from '~/app/services/list'
 import commonModel from '~/app/utils/commonModel'
+import { subscribe } from '~/app/utils/socket'
+
+const handlers = {
+  'list removed': (socket, dispatch, data) => {
+    dispatch({
+      type: 'removeLocally',
+      payload: data,
+    })
+  },
+  'list created': (socket, dispatch, data) => {
+    dispatch({
+      type: 'createLocally',
+      payload: data,
+    })
+  },
+}
 
 const listModel = commonModel('lists')({
   state: {},
+  subscriptions: {
+    socket: ({ dispatch }) => subscribe(handlers, dispatch),
+  },
   reducers: {
     addCard(
       state,
@@ -36,7 +55,7 @@ const listModel = commonModel('lists')({
     },
   },
   effects: {
-    *remove({ payload }, { put, call }) {
+    *removeLocally({ payload }, { put }) {
       yield put({
         type: 'rm',
         payload: payload.listId,
@@ -45,7 +64,30 @@ const listModel = commonModel('lists')({
         type: 'boards/removeList',
         payload,
       })
+    },
+    *remove({ payload }, { put, call }) {
+      yield put({
+        type: 'removeLocally',
+        payload,
+      })
       yield call(services.remove, payload)
+    },
+    *createLocally({ payload: list }, { put }) {
+      const { id: listId, boardId } = list
+
+      yield put({
+        type: 'save',
+        payload: {
+          [listId]: list,
+        },
+      })
+      yield put({
+        type: 'boards/addList',
+        payload: {
+          boardId,
+          listId,
+        },
+      })
     },
     *create(
       {
@@ -61,17 +103,8 @@ const listModel = commonModel('lists')({
         cards: [],
       }
       yield put({
-        type: 'save',
-        payload: {
-          [listId]: list,
-        },
-      })
-      yield put({
-        type: 'boards/addList',
-        payload: {
-          boardId,
-          listId,
-        },
+        type: 'createLocally',
+        payload: list,
       })
       const index = yield select(x => x.boards[boardId].lists.indexOf(listId))
       yield call(services.create, {
