@@ -1,5 +1,4 @@
 export default function handleError(err, req, res, next) {
-  console.error(err.stack || err)
   if (res.headersSent) {
     next(err)
   } else if (err.code === 'EBADCSRFTOKEN') {
