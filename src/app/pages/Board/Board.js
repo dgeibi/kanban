@@ -139,7 +139,7 @@ export default class Board extends Component {
     const {
       containerHeight,
       lists,
-      board: { lists: ordered },
+      board: { lists: ordered, id: boardId },
       dispatch,
     } = this.props
 
@@ -163,6 +163,7 @@ export default class Board extends Component {
                       key={key}
                       index={index}
                       id={key}
+                      boardId={boardId}
                       list={lists[key]}
                       dispatch={dispatch}
                     />

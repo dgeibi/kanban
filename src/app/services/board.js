@@ -48,3 +48,8 @@ export const reorderCards = ({ id, patches }) =>
 export const subscribe = data => {
   getSocket().emit('board::subscribe', data)
 }
+
+export const remove = ({ boardId }) =>
+  request(`/api/board/${boardId}`, {
+    method: 'DELETE',
+  })

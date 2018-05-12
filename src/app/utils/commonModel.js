@@ -10,6 +10,11 @@ const commonModel = namespace => (...models) =>
         replace(state, { payload }) {
           return payload
         },
+        rm(state, { payload: id }) {
+          const newState = { ...state }
+          delete newState[id]
+          return newState
+        },
       },
 
       effects: {

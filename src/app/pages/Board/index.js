@@ -41,6 +41,15 @@ export default connect(({ boards, lists }, { match }) => ({
       }
     }
 
+    remove = () => {
+      this.props.dispatch({
+        type: 'boards/remove',
+        payload: {
+          boardId: this.props.board.id,
+        },
+      })
+    }
+
     render() {
       const { board, dispatch, lists } = this.props
       if (!board) return <Redirect to="/" />
@@ -49,7 +58,7 @@ export default connect(({ boards, lists }, { match }) => ({
           <Header>
             <h3>{board.title}</h3>
             <div>
-              <Button>Delete</Button>
+              <Button onClick={this.remove}>Delete</Button>
             </div>
           </Header>
           <Wrapper>

@@ -1,22 +1,52 @@
 import { model } from 'dva-hot'
 import nanoid from 'nanoid'
-import { create } from '~/app/services/list'
+import produce from 'immer'
+import * as services from '~/app/services/list'
 import commonModel from '~/app/utils/commonModel'
 
 const listModel = commonModel('lists')({
   state: {},
   reducers: {
-    addCard(state, { cardId, id }) {
-      const lists = { ...state }
-      const list = { ...lists[id] }
-      const cards = (list.cards && [...list.cards]) || []
-      cards.push(cardId)
-      list.cards = cards
-      lists[id] = list
-      return lists
+    addCard(
+      state,
+      {
+        payload: { cardId, listId },
+      }
+    ) {
+      if (!state[listId]) throw Error('list not found')
+      return produce(state, lists => {
+        if (!lists[listId].cards) {
+          lists[listId].cards = []
+        }
+        lists[listId].cards.push(cardId)
+      })
+    },
+    removeCard(
+      state,
+      {
+        payload: { cardId, listId },
+      }
+    ) {
+      return produce(state, lists => {
+        if (!lists[listId]) throw Error('list not found')
+        const idx = lists[listId].cards && lists[listId].cards.indexOf(cardId)
+        if (idx < 0) throw Error('card not found')
+        lists[listId].cards.splice(idx, 1)
+      })
     },
   },
   effects: {
+    *remove({ payload }, { put, call }) {
+      yield put({
+        type: 'rm',
+        payload: payload.listId,
+      })
+      yield put({
+        type: 'boards/removeList',
+        payload,
+      })
+      yield call(services.remove, payload)
+    },
     *create(
       {
         payload: { title, boardId },
@@ -38,11 +68,13 @@ const listModel = commonModel('lists')({
       })
       yield put({
         type: 'boards/addList',
-        id: boardId,
-        listId,
+        payload: {
+          boardId,
+          listId,
+        },
       })
       const index = yield select(x => x.boards[boardId].lists.indexOf(listId))
-      yield call(create, {
+      yield call(services.create, {
         ...list,
         index,
       })

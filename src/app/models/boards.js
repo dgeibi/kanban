@@ -1,5 +1,7 @@
 import { model } from 'dva-hot'
 import nanoid from 'nanoid'
+import produce from 'immer'
+import { routerRedux } from 'dva/router'
 import commonModel from '~/app/utils/commonModel'
 import * as services from '~/app/services/board'
 import { subscribe } from '~/app/utils/socket'
@@ -35,14 +37,32 @@ const handlers = {
 const boardModel = commonModel('boards')({
   state: {},
   reducers: {
-    addList(state, { listId, id }) {
-      const boards = { ...state }
-      const board = { ...boards[id] }
-      const lists = (board.lists && [...board.lists]) || []
-      lists.push(listId)
-      board.lists = lists
-      boards[id] = board
-      return boards
+    addList(
+      state,
+      {
+        payload: { listId, boardId },
+      }
+    ) {
+      if (!state[boardId]) throw Error('board not found')
+      return produce(state, draft => {
+        if (!draft[boardId].lists) {
+          draft[boardId].lists = []
+        }
+        draft[boardId].lists.push(listId)
+      })
+    },
+    removeList(
+      state,
+      {
+        payload: { listId, boardId },
+      }
+    ) {
+      return produce(state, draft => {
+        if (!draft[boardId]) throw Error('board not found')
+        const idx = draft[boardId].lists && draft[boardId].lists.indexOf(listId)
+        if (idx < 0) throw Error('card not found')
+        draft[boardId].lists.splice(idx, 1)
+      })
     },
   },
   effects: {
@@ -122,6 +142,15 @@ const boardModel = commonModel('boards')({
 
     *subscribe({ payload }, { call }) {
       yield call(services.subscribe, payload)
+    },
+
+    *remove({ payload }, { call, put }) {
+      yield put(routerRedux.push('/'))
+      yield put({
+        type: 'rm',
+        payload: payload.boardId,
+      })
+      yield call(services.remove, payload)
     },
   },
   subscriptions: {

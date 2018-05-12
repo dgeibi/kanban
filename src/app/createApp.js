@@ -6,8 +6,9 @@ export default function createApp({ initialState, history, router }) {
   const app = dva({
     initialState,
     history,
-    onError() {
+    onError(e) {
       message.error('出错了')
+      console.log(e.stack || e)
     },
   })
   hot.patch(app)

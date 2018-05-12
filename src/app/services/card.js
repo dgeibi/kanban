@@ -11,3 +11,8 @@ export const create = data => {
     body: JSON.stringify(data),
   })
 }
+
+export const remove = ({ boardId, listId, cardId }) =>
+  request(`/api/board/${boardId}/list/${listId}/card/${cardId}`, {
+    method: 'DELETE',
+  })

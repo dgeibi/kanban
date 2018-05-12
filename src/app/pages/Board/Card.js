@@ -49,17 +49,14 @@ const BlockQuote = styled.div`
   }
 `
 
-// Previously this extended React.Component
-// That was a good thing, because using React.PureComponent can hide
-// issues with the selectors. However, moving it over does can considerable
-// performance improvements when reordering big lists (400ms => 200ms)
-// Need to be super sure we are not relying on PureComponent here for
-// things we should be doing in the selector as we do not know if consumers
-// will be using PureComponent
 export default class Card extends React.PureComponent {
   render() {
-    const { card, isDragging, provided } = this.props
-
+    const {
+      card,
+      isDragging,
+      provided,
+      // boardId, listId
+    } = this.props
     return (
       <Container
         isDragging={isDragging}

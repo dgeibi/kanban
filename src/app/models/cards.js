@@ -1,12 +1,23 @@
 import { model } from 'dva-hot'
 import nanoid from 'nanoid'
-import { create } from '~/app/services/card'
+import * as services from '~/app/services/card'
 import commonModel from '~/app/utils/commonModel'
 
 const cardModel = commonModel('cards')({
   state: {},
   reducers: {},
   effects: {
+    *remove({ payload }, { put, call }) {
+      yield put({
+        type: 'rm',
+        payload: payload.cardId,
+      })
+      yield put({
+        type: 'lists/removeCard',
+        payload,
+      })
+      yield call(services.remove, payload)
+    },
     *create(
       {
         payload: { text, listId, boardId },
@@ -26,11 +37,13 @@ const cardModel = commonModel('cards')({
       })
       yield put({
         type: 'lists/addCard',
-        id: listId,
-        cardId: card.id,
+        payload: {
+          listId,
+          cardId: card.id,
+        },
       })
       const index = yield select(x => x.lists[listId].cards.indexOf(card.id))
-      yield call(create, {
+      yield call(services.create, {
         ...card,
         boardId,
         index,

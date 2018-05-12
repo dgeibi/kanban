@@ -1,4 +1,4 @@
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, Icon } from 'antd'
 import React from 'react'
 import { css } from 'emotion'
 import { Draggable } from 'react-beautiful-dnd'
@@ -72,34 +72,34 @@ const Container = styled.div`
 `
 
 const Header = styled.div`
+  display: flex;
   flex-shrink: 0;
   border-top-left-radius: ${borderRadius}px;
   border-top-right-radius: ${borderRadius}px;
   background-color: ${({ isDragging }) =>
     isDragging ? colors.blue.lighter : colors.blue.light};
   transition: background-color 0.1s ease;
-  &:hover {
-    background-color: ${colors.blue.lighter};
-  }
 `
 
-export default function Column({ id, index, list, dispatch }) {
+export default function Column({ id, index, list, dispatch, boardId }) {
+  const listId = list.id
   const createCard = x => {
     dispatch({
       type: 'cards/create',
       payload: {
         ...x,
-        listId: list.id,
-        boardId: list.boardId,
+        listId,
+        boardId,
       },
     })
   }
   const renderList = ({ click, clicked, blur }) => (
     <>
       <List
-        id={list.id}
+        id={listId}
         list={list}
         listType="CARD"
+        boardId={boardId}
         add={
           clicked ? (
             <Creator
@@ -120,6 +120,16 @@ export default function Column({ id, index, list, dispatch }) {
     </>
   )
 
+  const remove = () => {
+    dispatch({
+      type: 'lists/remove',
+      payload: {
+        listId,
+        boardId,
+      },
+    })
+  }
+
   return (
     <Draggable draggableId={id} index={index}>
       {(provided, snapshot) => (
@@ -131,6 +141,9 @@ export default function Column({ id, index, list, dispatch }) {
             >
               {list.title}
             </Title>
+            <Button size="small" onClick={remove}>
+              <Icon type="delete" />
+            </Button>
           </Header>
           <Toggle>{renderList}</Toggle>
         </Container>

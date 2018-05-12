@@ -7,7 +7,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd'
 import Card from './Card'
 import { grid, colors } from './constants'
 
-function Cards({ cardOrder, cards }) {
+function Cards({ cardOrder, cards, boardId, listId }) {
   return cardOrder
     ? cardOrder.map((key, index) => (
         <Draggable key={key} draggableId={key} index={index}>
@@ -16,6 +16,8 @@ function Cards({ cardOrder, cards }) {
               card={cards[key]}
               isDragging={dragSnapshot.isDragging}
               provided={dragProvided}
+              boardId={boardId}
+              listId={listId}
             />
           )}
         </Draggable>
@@ -23,7 +25,7 @@ function Cards({ cardOrder, cards }) {
     : null
 }
 
-function InnerList({ list, cards, add, innerRef, placeholder }) {
+function InnerList({ list, cards, add, innerRef, placeholder, boardId }) {
   return (
     <div
       ref={innerRef}
@@ -31,7 +33,12 @@ function InnerList({ list, cards, add, innerRef, placeholder }) {
         overflow-y: auto;
       `}
     >
-      <Cards cardOrder={list.cards} cards={cards} />
+      <Cards
+        cardOrder={list.cards}
+        cards={cards}
+        boardId={boardId}
+        listId={list.id}
+      />
       {placeholder}
       {add}
     </div>
@@ -73,6 +80,7 @@ class List extends Component {
       style,
       cards,
       add,
+      boardId,
     } = this.props
     return (
       <Droppable
@@ -93,6 +101,7 @@ class List extends Component {
               list={list}
               cards={cards}
               add={add}
+              boardId={boardId}
               innerRef={this.saveInner}
               placeholder={dropProvided.placeholder}
             />
