@@ -10,6 +10,8 @@ import Column from './Column'
 
 const ContainerLists = styled.div`
   display: inline-flex;
+  align-items: flex-start;
+  height: 100%;
 `
 
 const Creator = Form.create()(({ form, onCreate, onCancel }) => {
@@ -74,14 +76,12 @@ export default class Board extends Component {
   onDragStart = () => {}
 
   onDragEnd = result => {
-    // dropped nowhere
     if (!result.destination) {
       return
     }
 
     const { source, destination } = result
 
-    // did not move anywhere - can bail early
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
@@ -90,8 +90,8 @@ export default class Board extends Component {
     }
 
     const { board, dispatch, lists } = this.props
-    // reordering column
-    if (result.type === 'COLUMN') {
+
+    if (result.type === 'LIST') {
       const ordered = reorder(
         this.props.board.lists,
         source.index,
@@ -140,12 +140,13 @@ export default class Board extends Component {
       containerHeight,
       lists,
       board: { lists: ordered },
+      dispatch,
     } = this.props
 
     const board = (
       <Droppable
         droppableId="board"
-        type="COLUMN"
+        type="LIST"
         direction="horizontal"
         ignoreContainerClipping={Boolean(containerHeight)}
       >
@@ -163,6 +164,7 @@ export default class Board extends Component {
                       index={index}
                       id={key}
                       list={lists[key]}
+                      dispatch={dispatch}
                     />
                   )
               )}

@@ -1,5 +1,6 @@
 import { connect } from 'dva'
 import { Redirect } from 'dva/router'
+import { Button } from 'antd'
 import styled from 'react-emotion'
 import React from 'react'
 import Board from './Board'
@@ -7,13 +8,10 @@ import Board from './Board'
 const Wrapper = styled.div`
   padding: 0 8px;
   overflow-x: auto;
+  height: calc(100vh - 155px);
 `
 
 const Header = styled.div`
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   padding: 4px 16px;
 `
 
@@ -24,6 +22,7 @@ export default connect(({ boards, lists }, { match }) => ({
   class BoardPage extends React.Component {
     componentDidMount() {
       const { board, dispatch } = this.props
+      if (!board) return
       if (!board.lists) {
         dispatch({
           type: 'boards/fetch',
@@ -49,6 +48,9 @@ export default connect(({ boards, lists }, { match }) => ({
         <>
           <Header>
             <h3>{board.title}</h3>
+            <div>
+              <Button>Delete</Button>
+            </div>
           </Header>
           <Wrapper>
             <Board dispatch={dispatch} board={board} lists={lists} />
