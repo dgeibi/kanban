@@ -21,7 +21,7 @@ export const connect = () => {
   if (socket) {
     throw Error('you have been connected!')
   }
-  socket = io(`${window.location.origin}?_csrf=${getToken()}`)
+  socket = io(`/?_csrf=${getToken()}`)
   return new Promise((resolve, reject) => {
     socket.once('connect', () => {
       resolve()

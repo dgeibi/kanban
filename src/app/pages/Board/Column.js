@@ -56,6 +56,7 @@ const AddButton = styled.a`
   padding-top: 14px;
   text-decoration: none;
   color: #182540;
+  display: block;
   &:hover {
     background-color: ${colors.blue.lighter};
     color: ${colors.black};

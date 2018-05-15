@@ -34,17 +34,16 @@ export default model(module)({
         userMeta = yield call(login, info)
       } catch (e) {
         message.error('登录失败，请检查你的用户名和密码')
+        throw e
       }
-      if (userMeta) {
-        yield call(connect)
-        yield put({
-          type: 'boards/fetchAll',
-        })
-        yield put({
-          type: 'replace',
-          payload: userMeta,
-        })
-      }
+      yield call(connect)
+      yield put({
+        type: 'boards/fetchAll',
+      })
+      yield put({
+        type: 'replace',
+        payload: userMeta,
+      })
     },
   },
 })
