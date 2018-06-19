@@ -1,7 +1,6 @@
 import Router from 'express-promise-router'
 import bodyParser from 'body-parser'
-import favicon from 'serve-favicon'
-import path from 'path'
+
 import { security, auenticated } from '~/server/security'
 import login from './routes/login'
 import logout from './routes/logout'
@@ -15,7 +14,6 @@ const app = Router()
 
 app.use(bodyParser.json())
 app.use(security)
-app.use(favicon(path.resolve('favicon.ico')))
 
 app.use('/join', join)
 app.use('/login', login)

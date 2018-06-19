@@ -2,6 +2,8 @@ import express from 'express'
 import logger from 'morgan'
 import Loadable from '@7rulnik/react-loadable'
 import { addTask } from '~/server/tasks'
+import favicon from 'serve-favicon'
+import path from 'path'
 
 import prepareStatic from './static'
 import handleError from './handleError'
@@ -15,6 +17,7 @@ addTask(preloadPromise)
 
 app.use(logger('dev'))
 app.use(prepareStatic())
+app.use(favicon(path.resolve('favicon.ico')))
 
 app.use(
   process.env.HOT_MODE

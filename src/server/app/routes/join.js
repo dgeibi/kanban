@@ -29,13 +29,15 @@ const inputValidate = (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
-  const user = await User.create(req.userInput)
-  req.login(user, e => {
+  const user = User.build(req.userInput)
+  await user.save()
+  const { username, email, id } = user
+  const _user = { username, email, id }
+  req.login(_user, e => {
     if (e) {
       next(e)
     } else {
-      const { username, email } = user
-      res.json({ username, email })
+      res.json(_user)
     }
   })
 }

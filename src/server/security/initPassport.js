@@ -23,13 +23,13 @@ passport.deserializeUser((id, done) => {
 
 const findByEmailOrUsername = emailOrUsername => {
   if (isEmail(emailOrUsername)) {
-    return User.findOne({
+    return User.unscoped().findOne({
       where: {
         email: normalizeEmail(emailOrUsername),
       },
     })
   } else {
-    return User.findOne({
+    return User.unscoped().findOne({
       where: {
         username: emailOrUsername,
       },
