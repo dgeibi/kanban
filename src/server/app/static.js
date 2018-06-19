@@ -11,15 +11,14 @@ const prepareStatic = () => {
       'eventsource/lib/eventsource-polyfill.js',
       `webpack-hot-middleware/client?reload=true&path=${hotPath}`,
     ])
-    const hot = {
+    const hotMiddleware = {
       path: hotPath,
     }
     const webpackMiddleware = require('config/webpackMiddleware')
     const middleware = webpackMiddleware({
       publicPath,
-      outputPath,
       config,
-      hot,
+      hotMiddleware,
     })
     addTask(middleware.untilValid)
     return middleware

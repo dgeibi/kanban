@@ -4,12 +4,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 const fs = require('fs')
 
-const normalizeConfig = anyConfig => {
-  if (typeof func === 'function') return anyConfig()
-  return anyConfig
-}
-
-const historyApi = ({ compiler, filename }) => {
+const getHistoryApiFallbackMiddleware = ({ compiler, filename }) => {
   const filesystem = compiler.outputFileSystem || fs
   return function historyApiFallback(req, res, next) {
     if (
@@ -34,35 +29,40 @@ const historyApi = ({ compiler, filename }) => {
   }
 }
 
-module.exports = function webpackMiddleware({
-  config,
-  historyApiFallback,
-  publicPath,
-  hot = {},
-  dev = {},
-}) {
-  const compiler = webpack(normalizeConfig(config))
-  const devInst = webpackDevMiddleware(compiler, {
-    publicPath,
-    ...dev,
-  })
-  const middlewares = [devInst, webpackHotMiddleware(compiler, hot)]
-  if (historyApiFallback) {
-    middlewares.push(historyApi({ ...historyApiFallback, compiler }))
-  }
-  const untilValid = new Promise(res => devInst.waitUntilValid(res))
+const defaults = {
+  hotMiddleware: {},
+  historyApiFallback: false,
+}
 
-  const webpackDevFull = (req, res, next) => {
-    if (publicPath && req.url.indexOf(publicPath) !== 0) {
-      next()
+module.exports = function webpackMiddleware(opts) {
+  const options = Object.assign({}, defaults, opts)
+  const compiler = webpack(options.config)
+  const devMiddleware = webpackDevMiddleware(compiler, {
+    publicPath: options.publicPath,
+    ...options.devMiddleware,
+  })
+  const hotMiddleware = webpackHotMiddleware(compiler, options.hotMiddleware)
+  const middlewares = [devMiddleware, hotMiddleware]
+  if (options.historyApiFallback) {
+    middlewares.push(
+      getHistoryApiFallbackMiddleware({
+        ...options.historyApiFallback,
+        compiler,
+      })
+    )
+  }
+  const untilValid = new Promise(res => devMiddleware.waitUntilValid(res))
+  const middleware = (req, res, next) => {
+    if (options.publicPath && req.url.indexOf(options.publicPath) !== 0) {
+      return next()
     } else {
-      middlewares.reduceRight(
-        (_next, fn) => e => {
+      return middlewares.reduceRight(
+        (_next, mid) => e => {
           if (e) {
             next(e)
           } else {
             try {
-              fn(req, res, _next)
+              mid(req, res, _next)
             } catch (err) {
               next(err)
             }
@@ -72,7 +72,17 @@ module.exports = function webpackMiddleware({
       )()
     }
   }
-  webpackDevFull.compiler = compiler
-  webpackDevFull.untilValid = untilValid
-  return webpackDevFull
+
+  const close = callback => {
+    devMiddleware.close(callback)
+  }
+
+  Object.assign(middleware, {
+    devMiddleware,
+    hotMiddleware,
+    compiler,
+    untilValid,
+    close,
+  })
+  return middleware
 }
