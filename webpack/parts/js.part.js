@@ -26,6 +26,7 @@ module.exports = ({ SERVER, NODE_ENV }) => {
           style: true,
           libraryDirectory: 'es',
         },
+    `antd-${SERVER ? 'server' : 'client'}`,
   ]
 
   return {
@@ -46,8 +47,16 @@ module.exports = ({ SERVER, NODE_ENV }) => {
                     presets: [babelReactPreset],
                     plugins: [
                       ['emotion', { sourceMap: !PROD }],
-                      'lodash',
                       importAntd,
+                      [
+                        'import',
+                        {
+                          libraryName: 'lodash',
+                          libraryDirectory: '',
+                          camel2DashComponentName: false,
+                        },
+                        'lodash',
+                      ],
                       '@7rulnik/react-loadable/babel',
                     ],
                   },

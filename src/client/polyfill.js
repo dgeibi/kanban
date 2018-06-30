@@ -14,5 +14,3 @@ import 'core-js/modules/web.dom.iterable'
 import 'regenerator-runtime/runtime'
 import 'url-polyfill'
 import 'raf/polyfill'
-
-Object.setPrototypeOf = require('setprototypeof')
