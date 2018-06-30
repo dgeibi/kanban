@@ -1,9 +1,9 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
-import isEmail from 'validator/lib/isEmail'
-import normalizeEmail from 'validator/lib/normalizeEmail'
-import { bcompare } from '~/server/helper'
+import normalizeEmail from '~/app/validation/normalizeEmail'
 import models from '~/server/models'
+import { pcompare } from '~/server/helper'
+import { normalizeUser } from './index'
 
 const { User } = models
 
@@ -22,10 +22,11 @@ passport.deserializeUser((id, done) => {
 })
 
 const findByEmailOrUsername = emailOrUsername => {
-  if (isEmail(emailOrUsername)) {
+  const email = normalizeEmail(emailOrUsername)
+  if (email) {
     return User.unscoped().findOne({
       where: {
-        email: normalizeEmail(emailOrUsername),
+        email,
       },
     })
   } else {
@@ -45,13 +46,15 @@ passport.use(
     },
     (emailOrUsername, password, done) => {
       findByEmailOrUsername(emailOrUsername)
-        .then(user => {
-          if (bcompare(password, user.password)) {
-            done(null, user)
-          } else {
-            done(null, false)
-          }
-        })
+        .then(user =>
+          pcompare(password, user.password).then(exist => {
+            if (exist) {
+              done(null, normalizeUser(user))
+            } else {
+              done(null, false)
+            }
+          })
+        )
         .catch(done)
     }
   )

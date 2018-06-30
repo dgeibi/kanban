@@ -1,4 +1,4 @@
-import isEmail from 'validator/lib/isEmail'
+import normalizeEmail from './normalizeEmail'
 
 const fields = {
   email: '电子邮箱地址',
@@ -43,7 +43,7 @@ export const emailOrUsername = [
       const errors = []
       if (
         typeof value === 'string' &&
-        !isEmail(value) &&
+        !normalizeEmail(value) &&
         !usernamePattern.test(value)
       ) {
         errors.push(Error('你输入的不是电子邮箱地址也不是合法的用户名'))

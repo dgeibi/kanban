@@ -1,8 +1,53 @@
-import { hashSync, compareSync } from 'bcryptjs'
+import pwd from 'pbkdf2-password'
 
-export const bhash = s => hashSync(s, 10)
+const hasher = pwd({
+  saltLength: 64,
+  digest: 'sha512',
+  iterations: 10000,
+  keyLength: 128,
+})
 
-export const bcompare = (s, h) => compareSync(s, h)
+/**
+ * @param {string} password
+ * @returns {Promise<string>}
+ */
+export const phash = password =>
+  new Promise((resolve, reject) => {
+    hasher({ password }, (err, pass, salt, hash) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(`${salt}$${hash}`)
+      }
+    })
+  })
+
+/**
+ * @param {string} password
+ * @param {string} saltHash
+ * @returns {Promise<boolean>}
+ */
+export const pcompare = (password, saltHash) => {
+  if (typeof password !== 'string') {
+    return Promise.reject(TypeError('password should be string'))
+  }
+  if (typeof saltHash !== 'string') {
+    return Promise.reject(TypeError('saltHash should be string'))
+  }
+  const idx = saltHash.indexOf('$')
+  if (idx < 0) return Promise.reject(Error('saltHash should have $'))
+  const [salt, hash1] = [saltHash.slice(0, idx), saltHash.slice(idx + 1)]
+
+  return new Promise((resolve, reject) => {
+    hasher({ password, salt }, (err, _pass, _salt, hash2) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(hash1 === hash2)
+      }
+    })
+  })
+}
 
 export function normalizePort(val) {
   const port = Math.floor(val)

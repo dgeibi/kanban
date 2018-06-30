@@ -1,6 +1,7 @@
 import passport from 'passport'
 import session from 'cookie-session'
 import csurf from 'csurf'
+import { pick } from 'lodash'
 import { wrapMiddlewares } from '~/server/helper'
 import './initPassport'
 
@@ -41,7 +42,7 @@ export const makeChecking = ({
   instKey,
   check,
   onFailure,
-}) => (queryOpts = {}) =>
+}) => queryOpts =>
   async function auth(req, res, next) {
     const inst = await Model.findById(req.params[paramKey], queryOpts)
     if (!await check(req, inst)) {
@@ -55,3 +56,5 @@ export const makeChecking = ({
       next()
     }
   }
+
+export const normalizeUser = user => pick(user, ['username', 'email', 'id'])

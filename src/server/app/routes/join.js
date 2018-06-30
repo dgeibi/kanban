@@ -2,7 +2,10 @@ import Router from 'express-promise-router'
 import Schema from 'async-validator'
 
 import * as validateRules from '~/app/validation/auth'
-import { unauenticated } from '~/server/security'
+import { phash } from '~/server/helper'
+import { unauenticated, normalizeUser } from '~/server/security'
+import normalizeEmail from '~/app/validation/normalizeEmail'
+
 import models from '~/server/models'
 
 const { User } = models
@@ -29,10 +32,14 @@ const inputValidate = (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
-  const user = User.build(req.userInput)
+  const user = User.build({
+    ...req.userInput,
+    email: normalizeEmail(req.userInput.email),
+    password: await phash(req.userInput.password),
+  })
   await user.save()
-  const { username, email, id } = user
-  const _user = { username, email, id }
+  const _user = normalizeUser(user)
+
   req.login(_user, e => {
     if (e) {
       next(e)

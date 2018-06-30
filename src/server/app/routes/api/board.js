@@ -41,11 +41,11 @@ const findBoardById = makeChecking({
   Model: Board,
   paramKey: 'boardId',
   instKey: 'board',
-  check: (req, board) => req.user.hasBoard(board),
+  check: (req, board) => req.user.id === board.userId,
 })
 
 const userHasBoard = findBoardById({
-  attributes: ['id'],
+  attributes: ['id', 'userId'],
 })
 
 boardRouter.delete('/:boardId', userHasBoard, async (req, res) => {
