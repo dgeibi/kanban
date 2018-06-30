@@ -6,7 +6,9 @@ module.exports = opts =>
     configs: [require('../base/config'), require('./config')],
     env: {
       development: {
-        SESSION_KEY: 'cat_sjjsj',
+        KEY1: 'cat_sjjsj',
+        KEY2: 'xsxs_dwdw',
+        KEY3: 'lmneycbwie13qw!DED2',
       },
     },
     ...opts,

@@ -1,17 +1,17 @@
 import passport from 'passport'
-import session from 'express-session'
+import session from 'cookie-session'
 import csurf from 'csurf'
 import { wrapMiddlewares } from '~/server/helper'
 import './initPassport'
 
 export const security = wrapMiddlewares([
   session({
-    secret: process.env.SESSION_KEY,
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
+    name: 'ss',
+    keys: [process.env.KEY1, process.env.KEY2, process.env.KEY3],
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: true,
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   }),
   passport.initialize(),
