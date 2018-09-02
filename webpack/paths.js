@@ -8,4 +8,5 @@ const configurePaths = root => ({
   asyncChunksStats: path.join(root, 'dist/asyncChunksStats.json'),
   config: path.join(root, 'webpack'),
 })
+
 module.exports = configurePaths(process.cwd())

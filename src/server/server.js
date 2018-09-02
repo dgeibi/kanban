@@ -4,9 +4,12 @@ import socketIO from 'socket.io'
 import { security } from '~/server/security'
 import app from './app'
 import socketHandlers from './socketHandlers'
+import { addTask } from './tasks'
 
-export const server = createServer(app)
-export const io = socketIO(server)
+export const server = createServer(app({ addTask }))
+const io = socketIO(server)
+
+global.io = io
 
 io.use((socket, next) => {
   security(socket.request, socket.request.res, err => {

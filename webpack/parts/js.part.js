@@ -2,7 +2,7 @@ const paths = require('../paths')
 
 module.exports = ({ SERVER, NODE_ENV }) => {
   const PROD = NODE_ENV === 'production'
-  const babelReactPreset = ['dgeibi-react']
+  const babelReactPreset = ['@dgeibi/babel-preset-react-app']
   if (SERVER) {
     babelReactPreset.push({
       targets: {

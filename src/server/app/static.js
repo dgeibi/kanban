@@ -1,7 +1,6 @@
 import express from 'express'
-import { addTask } from '~/server/tasks'
 
-const prepareStatic = () => {
+const prepareStatic = ({ addTask }) => {
   const { publicPath, outputPath } = require('config/paths')
   if (process.env.HOT_MODE) {
     const config = require('config/client')({ hot: true }).toConfigSync()

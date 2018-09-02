@@ -1,11 +1,10 @@
-import passport from 'passport'
 import session from 'cookie-session'
 import csurf from 'csurf'
-import { pick } from 'lodash'
-import { wrapMiddlewares } from '~/server/helper'
-import './initPassport'
+import { compose } from 'compose-middleware'
 
-export const security = wrapMiddlewares([
+import passport from './passport'
+
+export const security = compose([
   session({
     name: 'ss',
     keys: [process.env.KEY1, process.env.KEY2, process.env.KEY3],
@@ -15,8 +14,7 @@ export const security = wrapMiddlewares([
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   }),
-  passport.initialize(),
-  passport.session(),
+  passport(),
   csurf(),
 ])
 
@@ -35,26 +33,3 @@ export const unauenticated = (req, res, next) => {
     next()
   }
 }
-
-export const makeChecking = ({
-  Model,
-  paramKey,
-  instKey,
-  check,
-  onFailure,
-}) => queryOpts =>
-  async function auth(req, res, next) {
-    const inst = await Model.findById(req.params[paramKey], queryOpts)
-    if (!await check(req, inst)) {
-      if (typeof onFailure === 'function') {
-        onFailure(req, res)
-      } else {
-        res.status(403).end()
-      }
-    } else {
-      req[instKey] = inst
-      next()
-    }
-  }
-
-export const normalizeUser = user => pick(user, ['username', 'email', 'id'])

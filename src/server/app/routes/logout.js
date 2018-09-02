@@ -1,10 +1,12 @@
 import Router from 'express-promise-router'
 
-const logout = Router()
+export default () => {
+  const router = Router()
 
-logout.post('/', (req, res) => {
-  req.logout()
-  res.status(204).end()
-})
+  router.post('/logout', (req, res) => {
+    req.logout()
+    res.status(204).end()
+  })
 
-export default logout
+  return router
+}

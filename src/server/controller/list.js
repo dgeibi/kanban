@@ -1,0 +1,64 @@
+import { pick } from 'lodash'
+
+export const getLists = ({ models: { List, Card } }) => async (req, res) => {
+  const lists = await List.findAll({
+    where: {
+      boardId: req.board.id,
+    },
+    include: [Card],
+    order: ['index', [Card, 'index']],
+  })
+  res.json(lists)
+}
+
+export const createList = ({ models: { List, Card } }) => async (req, res) => {
+  const list = Object.assign(
+    pick(req.body, ['id', 'index', 'title', 'cards']),
+    {
+      boardId: req.board.id,
+    }
+  )
+  await List.create(list, {
+    include: [Card],
+  })
+  res.end()
+  req.toBoard('list created', list)
+}
+
+export const handleListId = ({ models: { List } }) => async (
+  req,
+  res,
+  next,
+  id
+) => {
+  const list = await List.findById(id, {
+    attributes: ['id'],
+  })
+  if (!(await req.board.hasList(list))) {
+    res.status(403).end()
+  } else {
+    req.list = list
+    next()
+  }
+}
+
+export const getList = ({ models: { List, Card } }) => async (req, res) => {
+  const list = await List.findById(req.list.id, {
+    include: [Card],
+    order: [[Card, 'index']],
+  })
+  if (list) {
+    res.json(list)
+  } else {
+    res.status(403).end()
+  }
+}
+
+export const deleteList = () => async (req, res) => {
+  await req.list.destroy()
+  res.status(204).end()
+  req.toBoard('list removed', {
+    boardId: req.board.id,
+    listId: req.list.id,
+  })
+}

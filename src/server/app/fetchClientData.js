@@ -1,12 +1,10 @@
 import { schema, normalize } from 'normalizr'
 import Router from 'express-promise-router'
 import models from '~/server/models'
-import { makeChecking } from '~/server/security'
+import { findBoardById } from '~/server/services/board'
+import { handleBoardId } from '~/server/controller/board'
 
-const logined = Router()
-
-const { Board, Card, List } = models
-
+const { Board } = models
 const { Entity } = schema
 
 const normalizeBoards = boards => {
@@ -20,55 +18,45 @@ const normalizeBoards = boards => {
   return normalize(boards.map(x => x.toJSON()), [board]).entities
 }
 
-logined.get('*', async (req, res, next) => {
-  const { email, username } = req.user
-  req.initialState.user = { email, username }
-  next()
-})
+export default () => {
+  const logined = Router()
 
-logined.get('*', async (req, res, next) => {
-  const boards = await Board.findAll({
-    where: {
-      userId: req.user.id,
-    },
-  })
-  Object.assign(req.initialState, normalizeBoards(boards))
-  next()
-})
+  logined
+    .get('*', (req, res, next) => {
+      const { email, username } = req.user
+      req.initialState = req.initialState || {}
+      req.initialState.user = { email, username }
+      next()
+    })
+    .get('*', async (req, res, next) => {
+      const boards = await Board.findAll({
+        where: {
+          userId: req.user.id,
+        },
+      })
+      Object.assign(req.initialState, normalizeBoards(boards))
+      next()
+    })
+    .param('boardId', handleBoardId({ models }))
+    .get('/board/:boardId', async (req, res, next) => {
+      const board = await findBoardById(req.params.boardId)
+      if (!board) {
+        res.status(403).end()
+        return
+      }
+      const { boards } = req.initialState
+      const state = normalizeBoards([req.board])
+      Object.assign(boards, state.boards)
+      Object.assign(req.initialState, state, { boards })
+      next()
+    })
 
-const findBoardById = makeChecking({
-  Model: Board,
-  paramKey: 'boardId',
-  instKey: 'board',
-  check: (req, board) => req.user.hasBoard(board),
-  onFailure: (req, res) => {
-    res.redirect('/')
-  },
-})
-
-logined.get(
-  '/board/:boardId',
-  findBoardById({
-    include: {
-      model: List,
-      include: Card,
-    },
-    order: [[List, 'index'], [List, Card, 'index']],
-  }),
-  (req, res, next) => {
-    const { boards } = req.initialState
-    const state = normalizeBoards([req.board])
-    Object.assign(boards, state.boards)
-    Object.assign(req.initialState, state, { boards })
-    next()
-  }
-)
-
-export default function fetchClientData(req, res, next) {
-  req.initialState = {}
-  if (req.isAuthenticated()) {
-    logined(req, res, next)
-  } else {
-    next()
+  return function fetchClientData(req, res, next) {
+    req.initialState = {}
+    if (req.isAuthenticated()) {
+      logined(req, res, next)
+    } else {
+      next()
+    }
   }
 }

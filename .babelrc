@@ -1,3 +1,3 @@
 {
-  "presets": ["dgeibi-react"]
+  "presets": ["@dgeibi/babel-preset-react-app"]
 }

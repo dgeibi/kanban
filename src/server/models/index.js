@@ -1,7 +1,6 @@
 import Sequelize from 'sequelize'
 import { capitalize } from 'lodash'
 import * as configSet from '~/server/config/db'
-import { addTask } from '~/server/tasks'
 
 const env = process.env.NODE_ENV || 'development'
 
@@ -34,7 +33,5 @@ Object.keys(db).forEach(key => {
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize
-
-addTask(db.sequelize.sync())
 
 export default db

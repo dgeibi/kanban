@@ -1,40 +1,41 @@
 import express from 'express'
 import logger from 'morgan'
 import Loadable from '@7rulnik/react-loadable'
-import { addTask } from '~/server/tasks'
 import favicon from 'serve-favicon'
 import path from 'path'
 
 import prepareStatic from './static'
 import handleError from './handleError'
-import appRouter from './app'
+import main from './main'
 
-const app = express()
+export default ({ addTask }) => {
+  const app = express()
+  let preloadPromise = Loadable.preloadAll()
+  addTask(preloadPromise)
+  app.use(handleError)
 
-let preloadPromise = Loadable.preloadAll()
+  app.use(logger('dev'))
+  app.use(prepareStatic({ addTask }))
+  app.use(favicon(path.resolve('favicon.ico')))
 
-addTask(preloadPromise)
+  let router = main()
 
-app.use(logger('dev'))
-app.use(prepareStatic())
-app.use(favicon(path.resolve('favicon.ico')))
-
-app.use(
-  process.env.HOT_MODE
+  const mainLogic = process.env.HOT_MODE
     ? (req, res, next) => {
         preloadPromise.then(() => {
-          appRouter(req, res, next)
+          router(req, res, next)
         })
       }
-    : appRouter
-)
+    : router
 
-app.use(handleError)
+  app.use(mainLogic)
 
-if (process.env.HOT_MODE) {
-  module.hot.accept('./app', () => {
-    preloadPromise = Loadable.preloadAll()
-  })
+  if (process.env.HOT_MODE) {
+    module.hot.accept('./main', () => {
+      router = main()
+      preloadPromise = Loadable.preloadAll()
+    })
+  }
+
+  return app
 }
-
-export default app
