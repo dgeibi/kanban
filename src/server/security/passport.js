@@ -48,15 +48,19 @@ export default () => {
       },
       (emailOrUsername, password, done) => {
         findByEmailOrUsername(emailOrUsername)
-          .then(user =>
-            pcompare(password, user.password).then(exist => {
-              if (exist) {
-                done(null, normalizeUser(user))
-              } else {
-                done(null, false)
-              }
-            })
-          )
+          .then(user => {
+            if (!user) {
+              return done(null, false)
+            } else {
+              return pcompare(password, user.password).then(exist => {
+                if (exist) {
+                  done(null, normalizeUser(user))
+                } else {
+                  done(null, false)
+                }
+              })
+            }
+          })
           .catch(done)
       }
     )

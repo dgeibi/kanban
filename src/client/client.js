@@ -4,7 +4,7 @@ import { createElement } from 'react'
 import { hydrate } from 'react-dom'
 import { setContainer } from 'dva-hot'
 import { createBrowserHistory } from 'history'
-import Loadable from '@7rulnik/react-loadable'
+import Loadable from 'react-loadable'
 import createApp from '~/app/createApp'
 import { setToken } from '~/app/utils/csrfToken'
 import { connect } from '~/app/utils/socket'
@@ -23,7 +23,5 @@ const app = createApp({
 })
 
 Promise.all([state.user && connect(), Loadable.preloadReady()]).then(() => {
-  hydrate(createElement(app.start()), setContainer('#root'), () => {
-    Loadable.preloadAll()
-  })
+  hydrate(createElement(app.start()), setContainer('#root'))
 })

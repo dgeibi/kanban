@@ -9,12 +9,8 @@ module.exports = ({ SERVER, NODE_ENV }) => {
         node: 'current',
       },
     })
-  } else {
-    // todo ie10 classes broken
-    babelReactPreset.push({
-      useBuiltIns: 'usage',
-    })
   }
+
   const importAntd = [
     'import',
     SERVER
@@ -33,9 +29,9 @@ module.exports = ({ SERVER, NODE_ENV }) => {
     module: {
       rules: [
         {
+          test: /\.js$/,
           oneOf: [
             {
-              test: /\.js$/,
               include: paths.src,
               use: [
                 'thread-loader',
@@ -57,14 +53,13 @@ module.exports = ({ SERVER, NODE_ENV }) => {
                         },
                         'lodash',
                       ],
-                      '@7rulnik/react-loadable/babel',
+                      'react-loadable/babel',
                     ],
                   },
                 },
               ],
             },
             {
-              test: /\.js$/,
               use: [
                 'thread-loader',
                 {
@@ -73,15 +68,7 @@ module.exports = ({ SERVER, NODE_ENV }) => {
                     babelrc: false,
                     cacheDirectory: true,
                     compact: true,
-                    presets: [
-                      [
-                        '@babel/preset-env',
-                        {
-                          modules: false,
-                          shippedProposals: true,
-                        },
-                      ],
-                    ],
+                    presets: ['@dgeibi/babel-preset-react-app/dependencies'],
                   },
                 },
               ],

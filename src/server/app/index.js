@@ -1,6 +1,6 @@
 import express from 'express'
 import logger from 'morgan'
-import Loadable from '@7rulnik/react-loadable'
+import Loadable from 'react-loadable'
 import favicon from 'serve-favicon'
 import path from 'path'
 

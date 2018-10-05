@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route, Redirect, Switch } from 'dva/router'
-import Loadable from '@7rulnik/react-loadable'
+import Loadable from 'react-loadable'
 import Frame from './layouts'
 import Title from './components/Title'
 

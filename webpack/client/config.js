@@ -1,6 +1,6 @@
 const ManifestPlugin = require('webpack-manifest-plugin')
-const { ReactLoadablePlugin } = require('@7rulnik/react-loadable/webpack')
 const { extname } = require('path')
+const { ReactLoadablePlugin } = require('../plugin/loadable')
 const paths = require('../paths')
 
 module.exports = ({ NODE_ENV }) => {
