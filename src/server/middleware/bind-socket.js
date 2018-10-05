@@ -6,7 +6,7 @@ export default () => {
 
   return function bindSocket(req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
-      const { sid } = req.query
+      const sid = req.headers['socket-id']
       const socket = sid ? global.io.sockets.sockets[sid] : null
       if (socket) {
         req.ioSocket = socket

@@ -2,6 +2,8 @@ import Sequelize from 'sequelize'
 import { capitalize } from 'lodash'
 import * as configSet from '~/server/config/db'
 
+Sequelize.Promise = Promise
+
 const env = process.env.NODE_ENV || 'development'
 
 const config = configSet[env]

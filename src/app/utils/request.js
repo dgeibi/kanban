@@ -29,17 +29,14 @@ function checkResponse(response) {
  * @return {Promise<object>}
  */
 function request(url, options) {
-  const urlObj = new URL(
-    url.indexOf('://') > 0 ? url : window.location.origin + url
-  )
   options = options || {}
   const headers = {}
   if (options.method && options.method !== 'GET') {
     const socket = getSocket()
     if (socket && socket.id) {
-      urlObj.searchParams.set('sid', socket.id)
+      headers['socket-id'] = socket.id
     }
-    urlObj.searchParams.set('_csrf', getToken())
+    headers['csrf-token'] = getToken()
     if (typeof options.body === 'string') {
       headers['Content-Type'] = 'application/json'
     }
@@ -47,7 +44,7 @@ function request(url, options) {
   if (options.headers) {
     Object.assign(headers, options.headers)
   }
-  return fetch(urlObj.toString(), {
+  return fetch(url, {
     credentials: 'same-origin',
     ...options,
     headers,
