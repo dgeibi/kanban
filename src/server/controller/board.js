@@ -115,7 +115,7 @@ export const createBoard = ({ models: { Board, List, Card } }) => async (
     }
   )
   req.toUser('board created', req.body)
-  res.end()
+  res.status(204).end()
 }
 
 export const handleBoardId = ({ models: { Board } }) => async (
@@ -142,4 +142,14 @@ export const deleteBoard = () => async (req, res) => {
   await req.board.destroy()
   res.status(204).end()
   req.toUser('board removed', req.board.id)
+}
+
+export const updateBoard = () => async (req, res) => {
+  const payload = pick(req.body, ['title'])
+  await req.board.update(payload)
+  res.status(204).end()
+  req.toBoard('board updated', {
+    id: req.board.id,
+    ...payload,
+  })
 }

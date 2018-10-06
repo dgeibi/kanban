@@ -12,6 +12,7 @@ export default ctx => {
     .param('boardId', board.handleBoardId(ctx))
     .get('/board/:boardId', board.getBoard(ctx))
     .delete('/board/:boardId', board.deleteBoard(ctx))
+    .patch('/board/:boardId', board.updateBoard(ctx))
     .patch('/board/:boardId/reorderCards', board.reorderCards(ctx))
     .patch('/board/:boardId/reorderLists', board.reorderLists(ctx))
 
@@ -20,11 +21,13 @@ export default ctx => {
   router
     .param('listId', list.handleListId(ctx))
     .get('/board/:boardId/list/:listId', list.getList(ctx))
+    .patch('/board/:boardId/list/:listId', list.updateList(ctx))
     .delete('/board/:boardId/list/:listId', list.deleteList(ctx))
 
   router.post('/board/:boardId/list/:listId/card', card.createCard(ctx))
   router
     .param('cardId', card.handleCardId(ctx))
+    .patch('/board/:boardId/list/:listId/card/:cardId', card.updateCard(ctx))
     .delete('/board/:boardId/list/:listId/card/:cardId', card.deleteCard(ctx))
 
   return router

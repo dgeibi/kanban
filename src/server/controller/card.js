@@ -1,12 +1,11 @@
+import { pick } from 'lodash'
+
 export const createCard = ({ models: { Card } }) => async (req, res) => {
-  const { text, index, id } = req.body
   await Card.create({
-    text,
-    index,
-    id,
+    ...pick(req.body, ['text', 'index', 'id']),
     listId: req.list.id,
   })
-  res.end()
+  res.status(204).end()
   req.toBoard('card created', req.body)
 }
 
@@ -23,6 +22,16 @@ export const handleCardId = ({ models: { Card } }) => async (
   } else {
     res.status(403).end()
   }
+}
+
+export const updateCard = () => async (req, res) => {
+  const payload = pick(req.body, ['text'])
+  await req.card.update(payload)
+  res.status(204).end()
+  req.toBoard('card updated', {
+    cardId: req.card.id,
+    ...payload,
+  })
 }
 
 export const deleteCard = () => async (req, res) => {

@@ -9,14 +9,20 @@ module.exports = ({ NODE_ENV }) => {
     ...(NODE_ENV !== 'production' && {
       devtool: 'cheap-module-source-map',
     }),
-    ...(PROD_MODE && {
-      optimization: {
-        runtimeChunk: 'single',
-        splitChunks: {
-          chunks: 'all',
-        },
-      },
-    }),
+    ...(PROD_MODE
+      ? {
+          optimization: {
+            runtimeChunk: 'single',
+            splitChunks: {
+              chunks: 'all',
+            },
+          },
+        }
+      : {
+          optimization: {
+            runtimeChunk: true,
+          },
+        }),
     output: {
       publicPath: paths.publicPath,
       path: paths.outputPath,

@@ -21,7 +21,7 @@ export const createList = ({ models: { List, Card } }) => async (req, res) => {
   await List.create(list, {
     include: [Card],
   })
-  res.end()
+  res.status(204).end()
   req.toBoard('list created', list)
 }
 
@@ -52,6 +52,16 @@ export const getList = ({ models: { List, Card } }) => async (req, res) => {
   } else {
     res.status(403).end()
   }
+}
+
+export const updateList = () => async (req, res) => {
+  const payload = pick(req.body, ['title'])
+  await req.list.update(payload)
+  res.status(204).end()
+  req.toBoard('list updated', {
+    listId: req.list.id,
+    ...payload,
+  })
 }
 
 export const deleteList = () => async (req, res) => {
