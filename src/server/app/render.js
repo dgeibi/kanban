@@ -53,7 +53,6 @@ export default () => {
   const isScript = x => x.file.endsWith('.js')
 
   return async function render(req, res) {
-    console.log(req.url)
     const { asyncChunksStats, initialAssets } = await manifestsPromise
     const location = req.url
     const modules = []

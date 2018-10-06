@@ -12,7 +12,6 @@ export const getLists = ({ models: { List, Card } }) => async (req, res) => {
 }
 
 export const createList = ({ models: { List, Card } }) => async (req, res) => {
-  console.log('!!!')
   const list = Object.assign(
     pick(req.body, ['id', 'index', 'title', 'cards']),
     {

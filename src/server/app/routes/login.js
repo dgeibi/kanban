@@ -25,8 +25,8 @@ export default () => {
   }
 
   const sendUserInfo = (req, res) => {
-    const { username, email } = req.user
-    res.json({ username, email })
+    const { username, email, id } = req.user
+    res.json({ username, email, id })
   }
 
   router.post(

@@ -1,5 +1,4 @@
 import express from 'express'
-import Router from 'express-promise-router'
 import board from './board'
 
 import models from '~/server/models'
@@ -14,7 +13,6 @@ export default () => {
     bindSocket(),
     board({
       models,
-      Router,
     })
   )
   return router

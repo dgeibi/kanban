@@ -1,9 +1,10 @@
+import Router from 'express-promise-router'
 import * as board from '~/server/controller/board'
 import * as list from '~/server/controller/list'
 import * as card from '~/server/controller/card'
 
 export default ctx => {
-  const router = ctx.Router()
+  const router = Router()
 
   router.get('/board', board.getBoards(ctx))
   router.post('/board', board.createBoard(ctx))

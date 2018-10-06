@@ -23,9 +23,9 @@ export default () => {
 
   logined
     .get('*', (req, res, next) => {
-      const { email, username } = req.user
+      const { email, username, id } = req.user
       req.initialState = req.initialState || {}
-      req.initialState.user = { email, username }
+      req.initialState.user = { email, username, id }
       next()
     })
     .get('*', async (req, res, next) => {
