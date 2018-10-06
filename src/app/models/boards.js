@@ -104,7 +104,7 @@ const boardModel = commonModel('boards')({
 
     *fetchAll(action, { call, put }) {
       const data = yield call(services.fetchAll)
-      yield put({
+      yield put.resolve({
         type: 'save',
         payload: data.boards,
       })
@@ -119,7 +119,7 @@ const boardModel = commonModel('boards')({
       const { result, entities } = yield call(services.fetchLists, id)
       const board = yield select(x => x.boards[id])
 
-      yield put({
+      yield put.resolve({
         type: 'save',
         payload: {
           [id]: {
@@ -128,11 +128,11 @@ const boardModel = commonModel('boards')({
           },
         },
       })
-      yield put({
+      yield put.resolve({
         type: 'lists/save',
         payload: entities.lists,
       })
-      yield put({
+      yield put.resolve({
         type: 'cards/save',
         payload: entities.cards,
       })
@@ -149,7 +149,7 @@ const boardModel = commonModel('boards')({
     *reorderCards({ payload }, { put, call }) {
       const { patches } = payload
 
-      yield put({
+      yield put.resolve({
         type: 'lists/patchPartial',
         payload: patches,
       })
@@ -162,7 +162,7 @@ const boardModel = commonModel('boards')({
 
     *remove({ payload }, { call, put }) {
       yield put(routerRedux.push('/'))
-      yield put({
+      yield put.resolve({
         type: 'rm',
         payload: payload.boardId,
       })

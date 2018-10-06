@@ -3,6 +3,7 @@ import React from 'react'
 import { css } from 'emotion'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'react-emotion'
+
 import Toggle from '~/app/components/Toggle'
 import List from './List'
 import Title from './Title'
@@ -82,46 +83,11 @@ const Header = styled.div`
   transition: background-color 0.1s ease;
 `
 
-export default function Column({ id, index, list, dispatch, boardId }) {
-  const listId = list.id
-  const createCard = x => {
-    dispatch({
-      type: 'cards/create',
-      payload: {
-        ...x,
-        listId,
-        boardId,
-      },
-    })
-  }
-  const renderList = ({ click, clicked, blur }) => (
-    <>
-      <List
-        id={listId}
-        list={list}
-        listType="CARD"
-        boardId={boardId}
-        add={
-          clicked ? (
-            <Creator
-              onCreate={x => {
-                createCard(x)
-                blur()
-              }}
-              onCancel={blur}
-            />
-          ) : null
-        }
-      />
-      {!clicked && (
-        <AddButton onClick={click} href="#">
-          添加卡片...
-        </AddButton>
-      )}
-    </>
-  )
+class Column extends React.Component {
+  remove = () => {
+    const { list, dispatch, boardId } = this.props
+    const listId = list.id
 
-  const remove = () => {
     dispatch({
       type: 'lists/remove',
       payload: {
@@ -131,24 +97,75 @@ export default function Column({ id, index, list, dispatch, boardId }) {
     })
   }
 
-  return (
-    <Draggable draggableId={id} index={index}>
-      {(provided, snapshot) => (
-        <Container innerRef={provided.innerRef} {...provided.draggableProps}>
-          <Header isDragging={snapshot.isDragging}>
-            <Title
-              isDragging={snapshot.isDragging}
-              {...provided.dragHandleProps}
-            >
-              {list.title}
-            </Title>
-            <Button size="small" onClick={remove}>
-              <Icon type="delete" />
-            </Button>
-          </Header>
-          <Toggle>{renderList}</Toggle>
-        </Container>
-      )}
-    </Draggable>
-  )
+  renderList = ({ click, clicked, blur }) => {
+    const { list, boardId } = this.props
+    const listId = list.id
+
+    return (
+      <>
+        <List
+          id={listId}
+          list={list}
+          listType="CARD"
+          boardId={boardId}
+          add={
+            clicked ? (
+              <Creator
+                onCreate={x => {
+                  this.createCard(x)
+                  blur()
+                }}
+                onCancel={blur}
+              />
+            ) : null
+          }
+        />
+        {!clicked && (
+          <AddButton onClick={click} href="#">
+            添加卡片...
+          </AddButton>
+        )}
+      </>
+    )
+  }
+
+  createCard(x) {
+    const { list, dispatch, boardId } = this.props
+    const listId = list.id
+
+    dispatch({
+      type: 'cards/create',
+      payload: {
+        ...x,
+        listId,
+        boardId,
+      },
+    })
+  }
+
+  render() {
+    const { id, index, list } = this.props
+    return (
+      <Draggable draggableId={id} index={index}>
+        {(provided, snapshot) => (
+          <Container innerRef={provided.innerRef} {...provided.draggableProps}>
+            <Header isDragging={snapshot.isDragging}>
+              <Title
+                isDragging={snapshot.isDragging}
+                {...provided.dragHandleProps}
+              >
+                {list.title}
+              </Title>
+              <Button size="small" onClick={this.remove}>
+                <Icon type="delete" />
+              </Button>
+            </Header>
+            <Toggle>{this.renderList}</Toggle>
+          </Container>
+        )}
+      </Draggable>
+    )
+  }
 }
+
+export default Column

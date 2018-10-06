@@ -27,30 +27,30 @@ const cardModel = commonModel('cards')({
   },
   effects: {
     *removeLocally({ payload }, { put }) {
-      yield put({
+      yield put.resolve({
         type: 'rm',
         payload: payload.cardId,
       })
-      yield put({
+      yield put.resolve({
         type: 'lists/removeCard',
         payload,
       })
     },
     *remove({ payload }, { put, call }) {
-      yield put({
+      yield put.resolve({
         type: 'removeLocally',
         payload,
       })
       yield call(services.remove, payload)
     },
     *createLocally({ payload: card }, { put }) {
-      yield put({
+      yield put.resolve({
         type: 'save',
         payload: {
           [card.id]: card,
         },
       })
-      yield put({
+      yield put.resolve({
         type: 'lists/addCard',
         payload: {
           listId: card.listId,
@@ -69,7 +69,7 @@ const cardModel = commonModel('cards')({
         text,
         listId,
       }
-      yield put({
+      yield put.resolve({
         type: 'createLocally',
         payload: card,
       })

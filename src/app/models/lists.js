@@ -56,17 +56,17 @@ const listModel = commonModel('lists')({
   },
   effects: {
     *removeLocally({ payload }, { put }) {
-      yield put({
+      yield put.resolve({
         type: 'rm',
         payload: payload.listId,
       })
-      yield put({
+      yield put.resolve({
         type: 'boards/removeList',
         payload,
       })
     },
     *remove({ payload }, { put, call }) {
-      yield put({
+      yield put.resolve({
         type: 'removeLocally',
         payload,
       })
@@ -75,13 +75,13 @@ const listModel = commonModel('lists')({
     *createLocally({ payload: list }, { put }) {
       const { id: listId, boardId } = list
 
-      yield put({
+      yield put.resolve({
         type: 'save',
         payload: {
           [listId]: list,
         },
       })
-      yield put({
+      yield put.resolve({
         type: 'boards/addList',
         payload: {
           boardId,
@@ -102,7 +102,7 @@ const listModel = commonModel('lists')({
         boardId,
         cards: [],
       }
-      yield put({
+      yield put.resolve({
         type: 'createLocally',
         payload: list,
       })

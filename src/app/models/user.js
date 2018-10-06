@@ -20,7 +20,7 @@ export default model(module)({
       try {
         const userMeta = yield call(join, info)
         yield call(connect)
-        yield put({
+        yield put.resolve({
           type: 'replace',
           payload: userMeta,
         })
