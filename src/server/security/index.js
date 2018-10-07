@@ -7,7 +7,7 @@ import passport from './passport'
 export const security = compose([
   session({
     name: 'ss',
-    keys: [process.env.KEY1, process.env.KEY2, process.env.KEY3],
+    keys: process.env.SESSION_KEYS.split(','),
     cookie: {
       secure: true,
       httpOnly: true,

@@ -5,12 +5,10 @@ call npm run -s build
 
 set HOST=127.0.0.1
 set DEBUG=app:*
-set KEY1=ACssw1231!dwee3j84fxryn
-set KEY2=xsdfl4vrnfg39ncf22#11
-set KEY3=mfk9jf#1cHw21111
-set DB_USERNAME=root
-set DB_PASSWORD=Seven7i!
-set DB_NAME=kanban
-set DB_HOSTNAME=localhost
+set SESSION_KEYS=ACssw1231!dwee3j84fxryn,xsdfl4vrnfg39ncf22#11,mfk9jf#1cHw21111
+REM set DB_USERNAME=root
+REM set DB_PASSWORD=Seven7i!
+REM set DB_NAME=kanban
+REM set DB_HOSTNAME=localhost
 
 call npm run -s start

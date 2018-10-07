@@ -33,45 +33,39 @@ module.exports = ({ SERVER, NODE_ENV }) => {
           oneOf: [
             {
               include: paths.src,
-              use: [
-                'thread-loader',
-                {
-                  loader: 'babel-loader',
-                  options: {
-                    babelrc: false,
-                    cacheDirectory: true,
-                    presets: [babelReactPreset],
-                    plugins: [
-                      ['emotion', { sourceMap: !PROD }],
-                      importAntd,
-                      [
-                        'import',
-                        {
-                          libraryName: 'lodash',
-                          libraryDirectory: '',
-                          camel2DashComponentName: false,
-                        },
-                        'lodash',
-                      ],
-                      'react-loadable/babel',
-                    ],
-                  },
-                },
-              ],
+              loader: 'babel-loader',
+              options: {
+                cacheDirectory: true,
+                compact: true,
+                babelrc: false,
+                configFile: false,
+                presets: [babelReactPreset],
+                plugins: [
+                  ['emotion', { sourceMap: !PROD }],
+                  importAntd,
+                  [
+                    'import',
+                    {
+                      libraryName: 'lodash',
+                      libraryDirectory: '',
+                      camel2DashComponentName: false,
+                    },
+                    'lodash',
+                  ],
+                  'react-loadable/babel',
+                ],
+              },
             },
             {
-              use: [
-                'thread-loader',
-                {
-                  loader: 'babel-loader',
-                  options: {
-                    babelrc: false,
-                    cacheDirectory: true,
-                    compact: true,
-                    presets: ['@dgeibi/babel-preset-react-app/dependencies'],
-                  },
-                },
-              ],
+              loader: 'babel-loader',
+              exclude: /node_modules[\\/](?:react|react-dom)[\\/]|@babel[\\/]runtime/,
+              options: {
+                babelrc: false,
+                configFile: false,
+                cacheDirectory: true,
+                compact: true,
+                presets: ['@dgeibi/babel-preset-react-app/dependencies'],
+              },
             },
           ],
         },
