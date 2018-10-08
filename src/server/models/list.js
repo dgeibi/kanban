@@ -19,13 +19,13 @@ export default function(sequelize) {
     },
   })
   List.associate = models => {
-    models.List.hasMany(models.Card)
-    models.List.belongsTo(models.Board, {
+    models.List.hasMany(models.Card, {
       onDelete: 'CASCADE',
       foreignKey: {
         allowNull: false,
       },
     })
+    models.List.belongsTo(models.Board)
   }
   return List
 }

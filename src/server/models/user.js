@@ -37,7 +37,12 @@ export default function(sequelize) {
     }
   )
   User.associate = models => {
-    models.User.hasMany(models.Board)
+    models.User.hasMany(models.Board, {
+      onDelete: 'CASCADE',
+      foreignKey: {
+        allowNull: false,
+      },
+    })
   }
   return User
 }

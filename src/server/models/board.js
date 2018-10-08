@@ -18,13 +18,13 @@ export default function(sequelize) {
     },
   })
   Board.associate = models => {
-    models.Board.hasMany(models.List)
-    models.Board.belongsTo(models.User, {
+    models.Board.hasMany(models.List, {
       onDelete: 'CASCADE',
       foreignKey: {
         allowNull: false,
       },
     })
+    models.Board.belongsTo(models.User)
   }
   Board.findAndCheck = (id, user) =>
     Board.findById(id, {
