@@ -14,6 +14,16 @@ const ContainerLists = styled.div`
   height: 100%;
 `
 
+const cardShape = css`
+  width: 200px;
+  height: 120px;
+  border-radius: 5px;
+  background: rgba(109, 214, 255, 0.27);
+  padding: 8px !important;
+  outline: 0;
+  border: 0 none;
+`
+
 const Creator = Form.create()(({ form, onCreate, onCancel }) => {
   const handleCreate = e => {
     e.preventDefault()
@@ -25,7 +35,7 @@ const Creator = Form.create()(({ form, onCreate, onCancel }) => {
   }
 
   return (
-    <Form>
+    <Form className={cardShape}>
       <Form.Item>
         {form.getFieldDecorator('title', {
           rules: [{ required: true, message: '必须输入标题' }],

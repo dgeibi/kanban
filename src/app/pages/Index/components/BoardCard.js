@@ -8,9 +8,9 @@ const cardShape = css`
   width: 200px;
   height: 120px;
   border-radius: 5px;
-  background: #6dd6ff45;
-  padding: 8px;
-  margin: 5px;
+  background: rgba(109, 214, 255, 0.27);
+  padding: 8px !important;
+  margin: 5px !important;
   outline: 0;
   border: 0 none;
 `
@@ -23,7 +23,11 @@ const CreateButton = function Card({ onClick }) {
   )
 }
 
-const Creator = Form.create()(({ form, onCreate, onCancel }) => {
+const Creator = Form.create()(function BoardCreatorInner({
+  form,
+  onCreate,
+  onCancel,
+}) {
   const handleCreate = e => {
     e.preventDefault()
     form.validateFieldsAndScroll((err, values) => {

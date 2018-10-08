@@ -28,7 +28,7 @@ const Creator = Form.create()(({ form, onCreate, onCancel }) => {
       })(<TextArea />)}
       <div
         className={css`
-          margin-top: 8px;
+          margin: 8px 0;
         `}
       >
         <Button
