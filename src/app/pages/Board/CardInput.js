@@ -1,38 +1,28 @@
 import React from 'react'
 import { css } from 'emotion'
-import styled from 'react-emotion'
 import enhanceWithClickOutside from 'react-click-outside'
-import { grid } from './constants'
+import { Button } from 'antd'
 
-const wrapperStyle = css`
-  flex-grow: 1;
-  overflow: hidden;
-  overflow-wrap: break-word;
-`
-
-const style = css`
-  position: relative;
+const cardStyle = css`
+  font-variant: tabular-nums;
   box-sizing: border-box;
-  padding: ${grid}px;
   margin: 0;
+  list-style: none;
+  position: relative;
+  display: inline-block;
   padding: 4px 11px;
   width: 100%;
-  height: 32px;
   font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  border: 1px solid #d9d9d9;
-  transition: background-color ease 0.2s;
-  user-select: none;
-`
-
-const Input = styled.input`
-  ${style};
-  border-radius: 4px;
-  background-image: none;
+  line-height: 1.5;
   color: rgba(0, 0, 0, 0.65);
-  display: inline-block;
-  list-style: none;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  max-width: 100%;
+  vertical-align: bottom;
+  transition: all 0.3s, height 0s;
+  min-height: 32px;
 
   :focus {
     border-color: #d991c2;
@@ -42,17 +32,16 @@ const Input = styled.input`
   }
 `
 
-const H4 = styled.h4`
-  ${style};
-  border-color: transparent;
-`
-
 const hide = {
   display: 'none',
 }
 
+const gap = {
+  marginBottom: '8px',
+}
+
 @enhanceWithClickOutside
-class Title extends React.Component {
+class CardInput extends React.Component {
   state = {
     clicked: false,
     value: this.props.children,
@@ -77,7 +66,7 @@ class Title extends React.Component {
   }
 
   handleClickOutside() {
-    this.submit()
+    this.cancel()
   }
 
   handleInputChange = e => {
@@ -101,7 +90,7 @@ class Title extends React.Component {
     }
   }
 
-  cancel() {
+  cancel = () => {
     this.setState({
       clicked: false,
       value: this.props.children,
@@ -120,20 +109,37 @@ class Title extends React.Component {
   render() {
     const { clicked, value } = this.state
     return (
-      <div className={wrapperStyle}>
-        <H4 onClick={this.handleClick} style={clicked ? hide : undefined}>
+      <div>
+        <div
+          onClick={this.handleClick}
+          className={cardStyle}
+          style={clicked ? hide : undefined}
+        >
           {value}
-        </H4>
-        <Input
-          value={value}
-          onChange={this.handleInputChange}
-          style={clicked ? undefined : hide}
-          innerRef={this.saveInput}
-          onKeyDown={this.handleKeyDown}
-        />
+        </div>
+        <div style={clicked ? undefined : hide}>
+          <textarea
+            value={value}
+            className={cardStyle}
+            onChange={this.handleInputChange}
+            ref={this.saveInput}
+            onKeyDown={this.handleKeyDown}
+            style={gap}
+          />
+          <Button
+            onClick={this.submit}
+            type="primary"
+            className={css`
+              margin-right: 5px;
+            `}
+          >
+            保存
+          </Button>
+          <Button onClick={this.cancel}>取消</Button>
+        </div>
       </div>
     )
   }
 }
 
-export default Title
+export default CardInput

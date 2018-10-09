@@ -7,7 +7,8 @@ import styled from 'react-emotion'
 import Toggle from '~/app/components/Toggle'
 import List from './List'
 import Title from './Title'
-import { borderRadius, colors, grid } from './constants'
+import { colors, grid } from './constants'
+import { BottomRoundedStyle, TopRoundedStyle } from './styles'
 
 const { TextArea } = Input
 
@@ -48,8 +49,7 @@ const Creator = Form.create()(({ form, onCreate, onCancel }) => {
 })
 
 const AddButton = styled.a`
-  border-bottom-left-radius: ${borderRadius}px;
-  border-bottom-right-radius: ${borderRadius}px;
+  ${BottomRoundedStyle};
   background-color: ${({ isDragging }) =>
     isDragging ? colors.blue.lighter : colors.blue.light};
   transition: background-color 0.1s ease;
@@ -74,10 +74,9 @@ const Container = styled.div`
 `
 
 const Header = styled.div`
+  ${TopRoundedStyle};
   display: flex;
   flex-shrink: 0;
-  border-top-left-radius: ${borderRadius}px;
-  border-top-right-radius: ${borderRadius}px;
   background-color: ${({ isDragging }) =>
     isDragging ? colors.blue.lighter : colors.blue.light};
   transition: background-color 0.1s ease;
@@ -108,6 +107,7 @@ class Column extends React.Component {
           list={list}
           listType="CARD"
           boardId={boardId}
+          clicked={clicked}
           add={
             clicked ? (
               <Creator
@@ -148,14 +148,13 @@ class Column extends React.Component {
     return (
       <Draggable draggableId={id} index={index}>
         {(provided, snapshot) => (
-          <Container innerRef={provided.innerRef} {...provided.draggableProps}>
+          <Container
+            innerRef={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
             <Header isDragging={snapshot.isDragging}>
-              <Title
-                isDragging={snapshot.isDragging}
-                {...provided.dragHandleProps}
-              >
-                {list.title}
-              </Title>
+              <Title isDragging={snapshot.isDragging}>{list.title}</Title>
               <Button size="small" onClick={this.remove}>
                 <Icon type="delete" />
               </Button>

@@ -14,8 +14,8 @@ const ContainerLists = styled.div`
   height: 100%;
 `
 
-const cardShape = css`
-  width: 200px;
+const listPlaceHolder = css`
+  width: 250px;
   height: 120px;
   border-radius: 5px;
   background: rgba(109, 214, 255, 0.27);
@@ -35,7 +35,7 @@ const Creator = Form.create()(({ form, onCreate, onCancel }) => {
   }
 
   return (
-    <Form className={cardShape}>
+    <Form className={listPlaceHolder}>
       <Form.Item>
         {form.getFieldDecorator('title', {
           rules: [{ required: true, message: '必须输入标题' }],
@@ -64,8 +64,8 @@ function ListCreator({ onCreate }) {
       {({ click, clicked, blur }) => {
         if (!clicked)
           return (
-            <button onClick={click} type="button">
-              add list
+            <button onClick={click} className={listPlaceHolder} type="button">
+              增加列
             </button>
           )
         return (

@@ -5,6 +5,7 @@ import { css } from 'emotion'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 
 import Card from './Card'
+import { BottomRoundedStyle } from './styles'
 import { grid, colors } from './constants'
 
 function Cards({ cardOrder, cards, boardId, listId }) {
@@ -81,6 +82,7 @@ class List extends Component {
       cards,
       add,
       boardId,
+      clicked,
     } = this.props
     return (
       <Droppable
@@ -92,6 +94,7 @@ class List extends Component {
         {(dropProvided, dropSnapshot) => (
           <Wrapper
             style={style}
+            className={clicked ? BottomRoundedStyle : undefined}
             isDraggingOver={dropSnapshot.isDraggingOver}
             isDropDisabled={isDropDisabled}
             {...dropProvided.droppableProps}
