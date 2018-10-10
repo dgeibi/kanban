@@ -1,7 +1,9 @@
 import React from 'react'
 import { css } from 'emotion'
 import enhanceWithClickOutside from 'react-click-outside'
-import { Button } from 'antd'
+import { Button, Input } from 'antd'
+
+const { TextArea } = Input
 
 const cardStyle = css`
   word-wrap: break-word;
@@ -13,6 +15,7 @@ const cardStyle = css`
   display: inline-block;
   padding: 4px 11px;
   width: 100%;
+  min-height: 32px;
   font-size: 14px;
   line-height: 1.5;
   color: rgba(0, 0, 0, 0.65);
@@ -23,7 +26,7 @@ const cardStyle = css`
   max-width: 100%;
   vertical-align: bottom;
   transition: all 0.3s, height 0s;
-  min-height: 80px;
+  overflow: hidden;
 
   :focus {
     border-color: #d991c2;
@@ -62,12 +65,14 @@ class CardInput extends React.Component {
       },
       () => {
         this.input.select()
+        this.textAreaInst.resizeTextarea()
       }
     )
   }
 
   handleClickOutside() {
-    this.cancel()
+    if (!this.state.clicked) return
+    this.submit()
   }
 
   handleInputChange = e => {
@@ -77,7 +82,8 @@ class CardInput extends React.Component {
   }
 
   saveInput = inst => {
-    this.input = inst
+    this.textAreaInst = inst
+    this.input = inst && inst.textAreaRef
   }
 
   handleKeyDown = e => {
@@ -119,13 +125,15 @@ class CardInput extends React.Component {
           {value}
         </div>
         <div style={clicked ? undefined : hide}>
-          <textarea
+          <TextArea
+            prefixCls=""
             value={value}
             className={cardStyle}
             onChange={this.handleInputChange}
             ref={this.saveInput}
             onKeyDown={this.handleKeyDown}
             style={gap}
+            autosize
           />
           <Button
             onClick={this.submit}

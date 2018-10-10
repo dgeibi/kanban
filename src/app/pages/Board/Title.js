@@ -77,6 +77,7 @@ class Title extends React.Component {
   }
 
   handleClickOutside() {
+    if (!this.state.clicked) return
     this.submit()
   }
 
