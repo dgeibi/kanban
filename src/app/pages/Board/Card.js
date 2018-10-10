@@ -11,7 +11,6 @@ const Container = styled.div`
   margin-bottom: ${grid}px;
   user-select: none;
   transition: background-color 0.1s ease;
-  /* anchor overrides */
   color: ${colors.black};
   &:hover {
     color: ${colors.black};
@@ -21,21 +20,20 @@ const Container = styled.div`
     outline: 2px solid ${colors.purple};
     box-shadow: none;
   }
-  /* flexbox */
-  /* display: flex; */
-  /* align-items: center; */
 `
 
 @connect()
 class Card extends React.PureComponent {
   handleCardChange = content => {
-    const { card } = this.props
+    const { card, listId, boardId } = this.props
 
     this.props.dispatch({
-      type: 'cards/save',
+      type: 'cards/update',
       payload: {
-        [card.id]: {
-          ...card,
+        cardId: card.id,
+        listId,
+        boardId,
+        data: {
           text: content,
         },
       },
@@ -43,12 +41,7 @@ class Card extends React.PureComponent {
   }
 
   render() {
-    const {
-      card,
-      isDragging,
-      provided,
-      // boardId, listId
-    } = this.props
+    const { card, isDragging, provided } = this.props
     return (
       <Container
         isDragging={isDragging}

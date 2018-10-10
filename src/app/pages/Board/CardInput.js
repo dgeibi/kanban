@@ -4,6 +4,7 @@ import enhanceWithClickOutside from 'react-click-outside'
 import { Button } from 'antd'
 
 const cardStyle = css`
+  word-wrap: break-word;
   font-variant: tabular-nums;
   box-sizing: border-box;
   margin: 0;
@@ -22,7 +23,7 @@ const cardStyle = css`
   max-width: 100%;
   vertical-align: bottom;
   transition: all 0.3s, height 0s;
-  min-height: 32px;
+  min-height: 80px;
 
   :focus {
     border-color: #d991c2;

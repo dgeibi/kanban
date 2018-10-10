@@ -16,7 +16,7 @@ export const handleCardId = ({ models: { Card } }) => async (
   id
 ) => {
   const card = await Card.findById(id)
-  if (await req.list.hashCard(card)) {
+  if (await req.list.hasCard(card)) {
     req.card = card
     next()
   } else {
@@ -30,7 +30,7 @@ export const updateCard = () => async (req, res) => {
   res.status(204).end()
   req.toBoard('card updated', {
     cardId: req.card.id,
-    ...payload,
+    data: payload,
   })
 }
 

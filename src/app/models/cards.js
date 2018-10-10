@@ -17,6 +17,12 @@ const handlers = {
       payload: data,
     })
   },
+  'card updated': (socket, dispatch, data) => {
+    dispatch({
+      type: 'updateLocally',
+      payload: data,
+    })
+  },
 }
 
 const cardModel = commonModel('cards')({
@@ -57,6 +63,30 @@ const cardModel = commonModel('cards')({
           cardId: card.id,
         },
       })
+    },
+    *updateLocally(
+      {
+        payload: { cardId, data },
+      },
+      { put, select }
+    ) {
+      const oldCard = yield select(x => x.cards[cardId])
+      yield put({
+        type: 'save',
+        payload: {
+          [cardId]: {
+            ...oldCard,
+            ...data,
+          },
+        },
+      })
+    },
+    *update({ payload }, { put, call }) {
+      yield put({
+        type: 'updateLocally',
+        payload,
+      })
+      yield call(services.update, payload)
     },
     *create(
       {
