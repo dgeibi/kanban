@@ -18,6 +18,12 @@ const handlers = {
       payload: data,
     })
   },
+  'list updated': (socket, dispatch, data) => {
+    dispatch({
+      type: 'updateLocally',
+      payload: data,
+    })
+  },
 }
 
 const listModel = commonModel('lists')({
@@ -55,6 +61,30 @@ const listModel = commonModel('lists')({
     },
   },
   effects: {
+    *updateLocally(
+      {
+        payload: { listId, data },
+      },
+      { put, select }
+    ) {
+      const old = yield select(x => x.lists[listId])
+      yield put({
+        type: 'save',
+        payload: {
+          [listId]: {
+            ...old,
+            ...data,
+          },
+        },
+      })
+    },
+    *update({ payload }, { put, call }) {
+      yield put({
+        type: 'updateLocally',
+        payload,
+      })
+      yield call(services.update, payload)
+    },
     *removeLocally({ payload }, { put }) {
       yield put.resolve({
         type: 'rm',

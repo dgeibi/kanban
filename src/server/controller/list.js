@@ -60,7 +60,7 @@ export const updateList = () => async (req, res) => {
   res.status(204).end()
   req.toBoard('list updated', {
     listId: req.list.id,
-    ...payload,
+    data: payload,
   })
 }
 

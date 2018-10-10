@@ -143,6 +143,22 @@ class Column extends React.Component {
     })
   }
 
+  updateListTitle = title => {
+    const { list, dispatch, boardId } = this.props
+    const listId = list.id
+
+    return dispatch({
+      type: 'lists/update',
+      payload: {
+        listId,
+        boardId,
+        data: {
+          title,
+        },
+      },
+    })
+  }
+
   render() {
     const { id, index, list } = this.props
     return (
@@ -154,7 +170,7 @@ class Column extends React.Component {
             {...provided.dragHandleProps}
           >
             <Header isDragging={snapshot.isDragging}>
-              <Title isDragging={snapshot.isDragging}>{list.title}</Title>
+              <Title onChange={this.updateListTitle}>{list.title}</Title>
               <Button size="small" onClick={this.remove}>
                 <Icon type="delete" />
               </Button>

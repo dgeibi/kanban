@@ -12,6 +12,12 @@ export const create = data => {
   })
 }
 
+export const update = ({ boardId, listId, data }) =>
+  request(`/api/board/${boardId}/list/${listId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
+
 export const remove = ({ boardId, listId }) =>
   request(`/api/board/${boardId}/list/${listId}`, {
     method: 'DELETE',
