@@ -53,3 +53,9 @@ export const remove = ({ boardId }) =>
   request(`/api/board/${boardId}`, {
     method: 'DELETE',
   })
+
+export const update = ({ boardId, data }) =>
+  request(`/api/board/${boardId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })

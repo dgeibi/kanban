@@ -1,4 +1,5 @@
 import React from 'react'
+import { btoa } from 'abab'
 import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'dva/router'
 import { Helmet } from 'react-helmet'
@@ -75,12 +76,14 @@ export default () => {
     resetServerContext()
     const appHTML = renderStylesToString(renderToString(<App />))
     const helmet = Helmet.renderStatic()
-    const preloadData = Buffer.from(
-      JSON.stringify({
-        state: app._store.getState(),
-        token: req.csrfToken(),
-      })
-    ).toString('base64')
+    const preloadData = btoa(
+      encodeURI(
+        JSON.stringify({
+          state: app._store.getState(),
+          token: req.csrfToken(),
+        })
+      )
+    )
 
     const getAssets = () => {
       const bundles = getBundles(asyncChunksStats, modules)
@@ -109,7 +112,7 @@ export default () => {
   ${scripts.map(x => `<link href="${x}" rel="preload" as="script">`).join('')}
   </head>
   <body><div id="root">${appHTML}</div>
-  <script id="app-data" type="text/plain">${preloadData}</script>
+  <div id="app-data" hidden>${preloadData}</div>
   ${scripts.map(x => `<script src="${x}"></script>`).join('')}
   </body>
   </html>`)

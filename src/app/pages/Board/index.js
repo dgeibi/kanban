@@ -3,6 +3,7 @@ import { Redirect } from 'dva/router'
 import { Button } from 'antd'
 import styled from 'react-emotion'
 import React from 'react'
+import Title from './Title'
 import Board from './Board'
 
 const Wrapper = styled.div`
@@ -50,13 +51,26 @@ export default connect(({ boards, lists }, { match }) => ({
       })
     }
 
+    handleTitleUpdate = title => {
+      this.props.dispatch({
+        type: 'boards/update',
+        payload: {
+          boardId: this.props.board.id,
+          data: {
+            title,
+          },
+        },
+      })
+    }
+
     render() {
       const { board, dispatch, lists } = this.props
       if (!board) return <Redirect to="/" />
+
       return (
         <>
           <Header>
-            <h3>{board.title}</h3>
+            <Title onChange={this.handleTitleUpdate}>{board.title}</Title>
             <div>
               <Button onClick={this.remove}>Delete</Button>
             </div>

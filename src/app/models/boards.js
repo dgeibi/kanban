@@ -48,6 +48,13 @@ const handlers = {
       payload: id,
     })
   },
+
+  'board updated': (socket, dispatch, data) => {
+    dispatch({
+      type: 'updateLocally',
+      payload: data,
+    })
+  },
 }
 
 const boardModel = commonModel('boards')({
@@ -167,6 +174,32 @@ const boardModel = commonModel('boards')({
         payload: payload.boardId,
       })
       yield call(services.remove, payload)
+    },
+
+    *updateLocally(
+      {
+        payload: { boardId, data },
+      },
+      { put, select }
+    ) {
+      const old = yield select(x => x.boards[boardId])
+      yield put({
+        type: 'save',
+        payload: {
+          [boardId]: {
+            ...old,
+            ...data,
+          },
+        },
+      })
+    },
+
+    *update({ payload }, { put, call }) {
+      yield put({
+        type: 'updateLocally',
+        payload,
+      })
+      yield call(services.update, payload)
     },
   },
   subscriptions: {

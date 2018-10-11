@@ -105,12 +105,13 @@ class CardInput extends React.Component {
   }
 
   submit = () => {
-    this.setState({
-      clicked: false,
-    })
     if (this.props.onChange) {
       this.props.onChange(this.state.value)
     }
+
+    this.setState({
+      clicked: false,
+    })
   }
 
   render() {

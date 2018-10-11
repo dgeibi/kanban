@@ -38,11 +38,11 @@ module.exports = ({ NODE_ENV }) => {
         filter: x => x.isInitial,
         writeToFileEmit: true,
         fileName: paths.initialAssets,
-        seed: {
-          styles: [],
-          scripts: [],
-        },
-        generate: (seed, files) =>
+        generate: (x, files) => {
+          const seed = {
+            styles: [],
+            scripts: [],
+          }
           files.reduce((assets, { path }) => {
             const ext = extname(path)
             if (ext === '.css') {
@@ -51,7 +51,9 @@ module.exports = ({ NODE_ENV }) => {
               assets.scripts.push(path)
             }
             return assets
-          }, seed),
+          }, seed)
+          return seed
+        },
       }),
     ],
   }

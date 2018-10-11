@@ -71,6 +71,7 @@ const Container = styled.div`
   margin-right: ${grid}px;
   margin-left: ${grid}px;
   max-height: 100%;
+  width: 250px;
 `
 
 const Header = styled.div`

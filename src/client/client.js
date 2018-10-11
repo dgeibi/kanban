@@ -12,7 +12,7 @@ import router from './router'
 import './global.css'
 
 const { token, state } = JSON.parse(
-  window.atob(document.querySelector('#app-data').textContent) || '{}'
+  decodeURI(window.atob(document.querySelector('#app-data').innerText))
 )
 setToken(token)
 

@@ -17,7 +17,8 @@ const style = css`
   margin: 0;
   padding: 4px 11px;
   width: 100%;
-  height: 32px;
+  height: auto;
+  min-height: 32px;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -110,12 +111,12 @@ class Title extends React.Component {
   }
 
   submit = () => {
-    this.setState({
-      clicked: false,
-    })
     if (this.props.onChange) {
       this.props.onChange(this.state.value)
     }
+    this.setState({
+      clicked: false,
+    })
   }
 
   render() {

@@ -149,7 +149,7 @@ export const updateBoard = () => async (req, res) => {
   await req.board.update(payload)
   res.status(204).end()
   req.toBoard('board updated', {
-    id: req.board.id,
-    ...payload,
+    boardId: req.board.id,
+    data: payload,
   })
 }
