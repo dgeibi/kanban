@@ -1,6 +1,5 @@
-import { Button, Form, Input, Icon } from 'antd'
+import { Button, Icon } from 'antd'
 import React from 'react'
-import { css } from 'emotion'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'react-emotion'
 
@@ -8,45 +7,8 @@ import Toggle from '~/app/components/Toggle'
 import List from './List'
 import Title from './Title'
 import { colors, grid } from './constants'
+import { CardCreator } from './CardInput'
 import { BottomRoundedStyle, TopRoundedStyle } from './styles'
-
-const { TextArea } = Input
-
-const Creator = Form.create()(({ form, onCreate, onCancel }) => {
-  const handleCreate = e => {
-    e.preventDefault()
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err && onCreate) {
-        onCreate(values)
-      }
-    })
-  }
-
-  return (
-    <Form>
-      {form.getFieldDecorator('text', {
-        rules: [{ required: true }],
-      })(<TextArea />)}
-      <div
-        className={css`
-          margin: 8px 0;
-        `}
-      >
-        <Button
-          htmlType="submit"
-          onClick={handleCreate}
-          type="primary"
-          className={css`
-            margin-right: 5px;
-          `}
-        >
-          添加
-        </Button>
-        <Button onClick={onCancel}>取消</Button>
-      </div>
-    </Form>
-  )
-})
 
 const AddButton = styled.a`
   ${BottomRoundedStyle};
@@ -97,40 +59,43 @@ class Column extends React.Component {
     })
   }
 
-  renderList = ({ click, clicked, blur }) => {
+  renderList() {
     const { list, boardId } = this.props
     const listId = list.id
 
     return (
-      <>
-        <List
-          id={listId}
-          list={list}
-          listType="CARD"
-          boardId={boardId}
-          clicked={clicked}
-          add={
-            clicked ? (
-              <Creator
-                onCreate={x => {
-                  this.createCard(x)
-                  blur()
-                }}
-                onCancel={blur}
-              />
-            ) : null
-          }
-        />
-        {!clicked && (
-          <AddButton onClick={click} href="#">
-            添加卡片...
-          </AddButton>
+      <Toggle>
+        {({ clicked, click, blur }) => (
+          <>
+            <List
+              id={listId}
+              list={list}
+              listType="CARD"
+              boardId={boardId}
+              clicked={clicked}
+              add={
+                <CardCreator
+                  active={clicked}
+                  onSubmit={v => {
+                    this.createCard(v)
+                    blur()
+                  }}
+                  onCancel={blur}
+                />
+              }
+            />
+            {!clicked && (
+              <AddButton onClick={click} href="#">
+                添加卡片...
+              </AddButton>
+            )}
+          </>
         )}
-      </>
+      </Toggle>
     )
   }
 
-  createCard(x) {
+  createCard = x => {
     const { list, dispatch, boardId } = this.props
     const listId = list.id
 
@@ -176,7 +141,7 @@ class Column extends React.Component {
                 <Icon type="delete" />
               </Button>
             </Header>
-            <Toggle>{this.renderList}</Toggle>
+            {this.renderList()}
           </Container>
         )}
       </Draggable>

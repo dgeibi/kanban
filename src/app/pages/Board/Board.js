@@ -39,7 +39,7 @@ const Creator = Form.create()(({ form, onCreate, onCancel }) => {
       <Form.Item>
         {form.getFieldDecorator('title', {
           rules: [{ required: true, message: '必须输入标题' }],
-        })(<Input placeholder="标题" />)}
+        })(<Input placeholder="标题" autoFocus />)}
       </Form.Item>
       <Form.Item>
         <Button
@@ -62,12 +62,13 @@ function ListCreator({ onCreate }) {
   return (
     <Toggle>
       {({ click, clicked, blur }) => {
-        if (!clicked)
+        if (!clicked) {
           return (
             <button onClick={click} className={listPlaceHolder} type="button">
               增加列
             </button>
           )
+        }
         return (
           <Creator
             onCreate={x => {

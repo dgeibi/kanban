@@ -3,7 +3,7 @@ import styled from 'react-emotion'
 import { connect } from 'dva'
 
 import { colors, grid } from './constants'
-import CardInput from './CardInput'
+import { CardInput } from './CardInput'
 
 const Container = styled.div`
   box-shadow: ${({ isDragging }) =>
@@ -24,7 +24,7 @@ const Container = styled.div`
 
 @connect()
 class Card extends React.PureComponent {
-  handleCardChange = content => {
+  handleCardChange = values => {
     const { card, listId, boardId } = this.props
 
     this.props.dispatch({
@@ -33,9 +33,7 @@ class Card extends React.PureComponent {
         cardId: card.id,
         listId,
         boardId,
-        data: {
-          text: content,
-        },
+        data: values,
       },
     })
   }
@@ -49,9 +47,7 @@ class Card extends React.PureComponent {
         {...provided.draggableProps}
         {...provided.dragHandleProps}
       >
-        <CardInput onChange={this.handleCardChange}>
-          {card && card.text}
-        </CardInput>
+        <CardInput onSubmit={this.handleCardChange} values={card} />
       </Container>
     )
   }

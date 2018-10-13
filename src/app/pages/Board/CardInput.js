@@ -27,6 +27,7 @@ const cardStyle = css`
   vertical-align: bottom;
   transition: all 0.3s, height 0s;
   overflow: hidden;
+  white-space: pre-wrap;
 
   :focus {
     border-color: #d991c2;
@@ -36,26 +37,140 @@ const cardStyle = css`
   }
 `
 
-const hide = {
-  display: 'none',
-}
+const btnGapCSS = css`
+  margin-right: 5px;
+`
 
 const gap = {
-  marginBottom: '8px',
+  margin: '8px 0',
+}
+
+class CustomTextArea extends React.Component {
+  saveRef = inst => {
+    this.antdTextArea = inst
+    this.textAreaRef = inst && inst.textAreaRef
+    this.resizeTextarea = inst && inst.resizeTextarea
+  }
+
+  focus() {
+    this.textAreaRef.focus()
+  }
+
+  blur() {
+    this.textAreaRef.blur()
+  }
+
+  changeValue(v) {
+    if (this.props.onChange) this.props.onChange(v)
+  }
+
+  handleChange = e => {
+    this.changeValue(e.target.value)
+  }
+
+  handleKeyDown = e => {
+    if (this.props.onKeyDown) {
+      this.props.onKeyDown(e)
+    }
+
+    const { keyCode } = e
+    if (!e.ctrlKey) {
+      if (keyCode === 13) {
+        if (this.props.onSubmit) {
+          e.preventDefault()
+          this.props.onSubmit()
+        }
+      } else if (keyCode === 27 && this.props.onCancel) {
+        this.props.onCancel()
+      }
+    } else if (keyCode === 13) {
+      this.changeValue(`${e.target.value}\n`)
+    }
+  }
+
+  render() {
+    const { onSubmit, onCancel, ...props } = this.props
+    return (
+      <TextArea
+        prefixCls=""
+        className={cardStyle}
+        ref={this.saveRef}
+        autosize
+        {...props}
+        onKeyDown={this.handleKeyDown}
+        onChange={this.handleChange}
+      />
+    )
+  }
+}
+
+class CardForm extends React.Component {
+  state = {
+    values: this.props.values || {},
+  }
+
+  static getDerivedStateFromProps(props) {
+    if (props.active) return null
+    return {
+      values: props.values || {},
+    }
+  }
+
+  submit = e => {
+    if (e) e.preventDefault()
+    const {
+      props: { onSubmit },
+      state: { values },
+    } = this
+
+    if (values.text) {
+      onSubmit(values)
+    }
+  }
+
+  handleTextChange = value => {
+    const { values } = this.state
+    this.setState({
+      values: {
+        ...values,
+        text: value,
+      },
+    })
+  }
+
+  render() {
+    const { onCancel, refTextArea } = this.props
+    const { text } = this.state.values
+
+    return (
+      <form onSubmit={this.submit}>
+        <CustomTextArea
+          onCancel={onCancel}
+          autoFocus
+          onSubmit={this.submit}
+          ref={refTextArea}
+          onChange={this.handleTextChange}
+          value={text}
+        />
+        <div style={gap}>
+          <Button htmlType="submit" type="primary" className={btnGapCSS}>
+            保存
+          </Button>
+          <Button onClick={onCancel}>取消</Button>
+        </div>
+      </form>
+    )
+  }
+}
+
+const hide = {
+  display: 'none',
 }
 
 @enhanceWithClickOutside
 class CardInput extends React.Component {
   state = {
     clicked: false,
-    value: this.props.children,
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (state.clicked) return null
-    return {
-      value: props.children,
-    }
   }
 
   handleClick = () => {
@@ -64,7 +179,7 @@ class CardInput extends React.Component {
         clicked: true,
       },
       () => {
-        this.input.select()
+        this.textAreaRef.select()
         this.textAreaInst.resizeTextarea()
       }
     )
@@ -72,50 +187,41 @@ class CardInput extends React.Component {
 
   handleClickOutside() {
     if (!this.state.clicked) return
-    this.submit()
+    this.form.submit()
   }
 
-  handleInputChange = e => {
-    this.setState({
-      value: e.target.value,
-    })
-  }
-
-  saveInput = inst => {
+  saveTextAreaInst = inst => {
     this.textAreaInst = inst
-    this.input = inst && inst.textAreaRef
-  }
-
-  handleKeyDown = e => {
-    if (!e.ctrlKey) {
-      const { keyCode } = e
-      if (keyCode === 13) {
-        this.submit()
-      } else if (keyCode === 27) {
-        this.cancel()
-      }
-    }
+    this.textAreaRef = inst && inst.textAreaRef
   }
 
   cancel = () => {
     this.setState({
       clicked: false,
-      value: this.props.children,
     })
   }
 
-  submit = () => {
-    if (this.props.onChange) {
-      this.props.onChange(this.state.value)
-    }
+  submit = v => {
+    const {
+      state: { clicked },
+      props: { onSubmit },
+    } = this
 
-    this.setState({
-      clicked: false,
-    })
+    if (clicked) {
+      onSubmit(v)
+      this.setState({
+        clicked: false,
+      })
+    }
+  }
+
+  saveForm = form => {
+    this.form = form
   }
 
   render() {
-    const { clicked, value } = this.state
+    const { values } = this.props
+    const { clicked } = this.state
     return (
       <div>
         <div
@@ -123,33 +229,41 @@ class CardInput extends React.Component {
           className={cardStyle}
           style={clicked ? hide : undefined}
         >
-          {value}
+          {values && values.text}
         </div>
         <div style={clicked ? undefined : hide}>
-          <TextArea
-            prefixCls=""
-            value={value}
-            className={cardStyle}
-            onChange={this.handleInputChange}
-            ref={this.saveInput}
-            onKeyDown={this.handleKeyDown}
-            style={gap}
-            autosize
+          <CardForm
+            ref={this.saveForm}
+            refTextArea={this.saveTextAreaInst}
+            values={values}
+            onCancel={this.cancel}
+            onSubmit={this.submit}
+            active={clicked}
           />
-          <Button
-            onClick={this.submit}
-            type="primary"
-            className={css`
-              margin-right: 5px;
-            `}
-          >
-            保存
-          </Button>
-          <Button onClick={this.cancel}>取消</Button>
         </div>
       </div>
     )
   }
 }
 
-export default CardInput
+@enhanceWithClickOutside
+class CardCreator extends React.Component {
+  handleClickOutside() {
+    if (this.form) {
+      this.form.submit()
+    }
+  }
+
+  saveForm = inst => {
+    this.form = inst
+  }
+
+  render() {
+    const { active } = this.props
+    return (
+      <div>{active && <CardForm ref={this.saveForm} {...this.props} />}</div>
+    )
+  }
+}
+
+export { CardInput, CardForm, CardCreator }
