@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from 'emotion'
 import styled from 'react-emotion'
-import enhanceWithClickOutside from 'react-click-outside'
+import ClickOutside from '~/app/components/react-click-outside'
 import { grid } from './constants'
 
 const wrapperStyle = css`
@@ -52,7 +52,6 @@ const hide = {
   display: 'none',
 }
 
-@enhanceWithClickOutside
 class Title extends React.Component {
   state = {
     clicked: false,
@@ -77,7 +76,7 @@ class Title extends React.Component {
     )
   }
 
-  handleClickOutside() {
+  handleClickOutside = () => {
     if (!this.state.clicked) return
     this.submit()
   }
@@ -122,7 +121,10 @@ class Title extends React.Component {
   render() {
     const { clicked, value } = this.state
     return (
-      <div className={wrapperStyle}>
+      <ClickOutside
+        className={wrapperStyle}
+        onClickOutside={this.handleClickOutside}
+      >
         <H4 onClick={this.handleClick} style={clicked ? hide : undefined}>
           {value}
         </H4>
@@ -133,7 +135,7 @@ class Title extends React.Component {
           innerRef={this.saveInput}
           onKeyDown={this.handleKeyDown}
         />
-      </div>
+      </ClickOutside>
     )
   }
 }

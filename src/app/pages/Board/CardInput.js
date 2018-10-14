@@ -1,7 +1,7 @@
 import React from 'react'
 import { css } from 'emotion'
-import enhanceWithClickOutside from 'react-click-outside'
 import { Button, Input } from 'antd'
+import ClickOutside from '~/app/components/react-click-outside'
 
 const { TextArea } = Input
 
@@ -167,7 +167,6 @@ const hide = {
   display: 'none',
 }
 
-@enhanceWithClickOutside
 class CardInput extends React.Component {
   state = {
     clicked: false,
@@ -185,7 +184,7 @@ class CardInput extends React.Component {
     )
   }
 
-  handleClickOutside() {
+  handleClickOutside = () => {
     if (!this.state.clicked) return
     this.form.submit()
   }
@@ -223,7 +222,7 @@ class CardInput extends React.Component {
     const { values } = this.props
     const { clicked } = this.state
     return (
-      <div>
+      <ClickOutside onClickOutside={this.handleClickOutside}>
         <div
           onClick={this.handleClick}
           className={cardStyle}
@@ -241,14 +240,13 @@ class CardInput extends React.Component {
             active={clicked}
           />
         </div>
-      </div>
+      </ClickOutside>
     )
   }
 }
 
-@enhanceWithClickOutside
 class CardCreator extends React.Component {
-  handleClickOutside() {
+  handleClickOutside = () => {
     if (this.form) {
       this.form.submit()
     }
@@ -261,7 +259,9 @@ class CardCreator extends React.Component {
   render() {
     const { active } = this.props
     return (
-      <div>{active && <CardForm ref={this.saveForm} {...this.props} />}</div>
+      <ClickOutside onClickOutside={this.handleClickOutside}>
+        {active && <CardForm ref={this.saveForm} {...this.props} />}
+      </ClickOutside>
     )
   }
 }

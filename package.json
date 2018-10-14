@@ -45,7 +45,6 @@
     "raf": "^3.4.0",
     "react": "^16.5.2",
     "react-beautiful-dnd": "^9.0.2",
-    "react-click-outside": "^3.0.1",
     "react-dom": "^16.5.2",
     "react-emotion": "^9.2.12",
     "react-helmet": "^5.2.0",
