@@ -2,30 +2,14 @@ import { Button, Icon } from 'antd'
 import React from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'react-emotion'
+import { css } from 'emotion'
 
 import Toggle from '~/app/components/Toggle'
 import List from './List'
 import Title from './Title'
 import { colors, grid } from './constants'
 import { CardCreator } from './CardInput'
-import { BottomRoundedStyle, TopRoundedStyle } from './styles'
-
-const AddButton = styled.a`
-  ${BottomRoundedStyle};
-  background-color: ${({ isDragging }) =>
-    isDragging ? colors.blue.lighter : colors.blue.light};
-  transition: background-color 0.1s ease;
-  padding: ${grid}px;
-  padding-top: 14px;
-  text-decoration: none;
-  color: #182540;
-  display: block;
-  &:hover {
-    background-color: ${colors.blue.lighter};
-    color: ${colors.black};
-    text-decoration: underline;
-  }
-`
+import { TopRoundedStyle } from './styles'
 
 const Container = styled.div`
   display: flex;
@@ -43,6 +27,10 @@ const Header = styled.div`
   background-color: ${({ isDragging }) =>
     isDragging ? colors.blue.lighter : colors.blue.light};
   transition: background-color 0.1s ease;
+`
+
+const BottomStyle = css`
+  margin-bottom: ${grid}px;
 `
 
 class Column extends React.Component {
@@ -66,14 +54,14 @@ class Column extends React.Component {
     return (
       <Toggle>
         {({ clicked, click, blur }) => (
-          <>
-            <List
-              id={listId}
-              list={list}
-              listType="CARD"
-              boardId={boardId}
-              clicked={clicked}
-              add={
+          <List
+            id={listId}
+            list={list}
+            listType="CARD"
+            boardId={boardId}
+            clicked={clicked}
+            add={
+              <>
                 <CardCreator
                   active={clicked}
                   onSubmit={v => {
@@ -82,14 +70,16 @@ class Column extends React.Component {
                   }}
                   onCancel={blur}
                 />
-              }
-            />
-            {!clicked && (
-              <AddButton onClick={click} href="#">
-                添加卡片...
-              </AddButton>
-            )}
-          </>
+                <div>
+                  {!clicked && (
+                    <Button onClick={click} className={BottomStyle}>
+                      添加卡片
+                    </Button>
+                  )}
+                </div>
+              </>
+            }
+          />
         )}
       </Toggle>
     )

@@ -38,6 +38,19 @@ class Card extends React.PureComponent {
     })
   }
 
+  handleCardDelete = () => {
+    const { card, listId, boardId } = this.props
+
+    this.props.dispatch({
+      type: 'cards/remove',
+      payload: {
+        cardId: card.id,
+        listId,
+        boardId,
+      },
+    })
+  }
+
   render() {
     const { card, isDragging, provided } = this.props
     return (
@@ -47,7 +60,11 @@ class Card extends React.PureComponent {
         {...provided.draggableProps}
         {...provided.dragHandleProps}
       >
-        <CardInput onSubmit={this.handleCardChange} values={card} />
+        <CardInput
+          onSubmit={this.handleCardChange}
+          onDelete={this.handleCardDelete}
+          values={card}
+        />
       </Container>
     )
   }

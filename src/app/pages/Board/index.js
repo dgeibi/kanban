@@ -8,8 +8,8 @@ import Board from './Board'
 
 const Wrapper = styled.div`
   padding: 0 8px;
-  overflow-x: auto;
-  height: calc(100vh - 155px);
+  overflow-x: scroll;
+  height: calc(100vh - 165px);
 `
 
 const Header = styled.div`
@@ -72,7 +72,7 @@ export default connect(({ boards, lists }, { match }) => ({
           <Header>
             <Title onChange={this.handleTitleUpdate}>{board.title}</Title>
             <div>
-              <Button onClick={this.remove}>Delete</Button>
+              <Button onClick={this.remove}>删除看板</Button>
             </div>
           </Header>
           <Wrapper>

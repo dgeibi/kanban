@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import styled from 'react-emotion'
 import { connect } from 'dva'
-import { css } from 'emotion'
+import styled from 'react-emotion'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 
 import Card from './Card'
@@ -26,50 +25,20 @@ function Cards({ cardOrder, cards, boardId, listId }) {
     : null
 }
 
-function InnerList({ list, cards, add, innerRef, placeholder, boardId }) {
-  return (
-    <div
-      ref={innerRef}
-      className={css`
-        overflow-y: auto;
-      `}
-    >
-      <Cards
-        cardOrder={list.cards}
-        cards={cards}
-        boardId={boardId}
-        listId={list.id}
-      />
-      {placeholder}
-      {add}
-    </div>
-  )
-}
-
 const Wrapper = styled.div`
-  background-color: ${({ isDraggingOver }) =>
-    isDraggingOver ? colors.blue.lighter : colors.blue.light};
   display: flex;
   flex-direction: column;
-  opacity: ${({ isDropDisabled }) => (isDropDisabled ? 0.5 : 'inherit')};
-  padding: ${grid}px;
-  padding-bottom: 0;
   transition: background-color 0.1s ease, opacity 0.1s ease;
   user-select: none;
-  height: 100%;
+  ${BottomRoundedStyle};
+  background-color: ${({ isDraggingOver }) =>
+    isDraggingOver ? colors.blue.lighter : colors.blue.light};
+  opacity: ${({ isDropDisabled }) => (isDropDisabled ? 0.5 : 'inherit')};
+  padding: 0 ${grid}px;
+  overflow-y: scroll;
 `
 
 class List extends Component {
-  componentDidUpdate(prevProps) {
-    if (!prevProps.add && this.props.add) {
-      this.innerContainer.scrollTop = this.innerContainer.scrollHeight
-    }
-  }
-
-  saveInner = x => {
-    this.innerContainer = x
-  }
-
   render() {
     const {
       ignoreContainerClipping,
@@ -77,11 +46,9 @@ class List extends Component {
       id,
       list,
       listType,
-      style,
       cards,
       add,
       boardId,
-      clicked,
     } = this.props
     return (
       <Droppable
@@ -92,21 +59,19 @@ class List extends Component {
       >
         {(dropProvided, dropSnapshot) => (
           <Wrapper
-            style={style}
-            className={clicked ? BottomRoundedStyle : undefined}
+            innerRef={dropProvided.innerRef}
+            {...dropProvided.droppableProps}
             isDraggingOver={dropSnapshot.isDraggingOver}
             isDropDisabled={isDropDisabled}
-            {...dropProvided.droppableProps}
-            innerRef={dropProvided.innerRef}
           >
-            <InnerList
-              list={list}
+            <Cards
+              cardOrder={list.cards}
               cards={cards}
-              add={add}
               boardId={boardId}
-              innerRef={this.saveInner}
-              placeholder={dropProvided.placeholder}
+              listId={list.id}
             />
+            {dropProvided.placeholder}
+            {add}
           </Wrapper>
         )}
       </Droppable>

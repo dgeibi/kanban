@@ -139,7 +139,7 @@ class CardForm extends React.Component {
   }
 
   render() {
-    const { onCancel, refTextArea } = this.props
+    const { onCancel, refTextArea, onDelete } = this.props
     const { text } = this.state.values
 
     return (
@@ -156,7 +156,14 @@ class CardForm extends React.Component {
           <Button htmlType="submit" type="primary" className={btnGapCSS}>
             保存
           </Button>
-          <Button onClick={onCancel}>取消</Button>
+          <Button onClick={onCancel} className={btnGapCSS}>
+            取消
+          </Button>
+          {onDelete && (
+            <Button onClick={onDelete} className={btnGapCSS}>
+              删除
+            </Button>
+          )}
         </div>
       </form>
     )
@@ -219,7 +226,7 @@ class CardInput extends React.Component {
   }
 
   render() {
-    const { values } = this.props
+    const { values, onDelete } = this.props
     const { clicked } = this.state
     return (
       <ClickOutside onClickOutside={this.handleClickOutside}>
@@ -236,6 +243,7 @@ class CardInput extends React.Component {
             refTextArea={this.saveTextAreaInst}
             values={values}
             onCancel={this.cancel}
+            onDelete={onDelete}
             onSubmit={this.submit}
             active={clicked}
           />
