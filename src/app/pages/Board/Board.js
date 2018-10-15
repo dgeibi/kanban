@@ -21,6 +21,7 @@ const listPlaceHolder = css`
   border-radius: 5px;
   background: rgba(109, 214, 255, 0.27);
   padding: 8px !important;
+  margin: 0 7px;
   outline: 0;
   border: 0 none;
 `

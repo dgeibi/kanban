@@ -20,7 +20,7 @@ function Header({ user, dispatch }) {
         )}
       >
         <div>
-          <Link to="/">看看板</Link>
+          <Link to="/">KanKanKanban</Link>
         </div>
         <div>
           {user && (

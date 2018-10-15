@@ -29,11 +29,15 @@ const Div = styled.div`
   }
 `
 
+const H1 = styled.h1`
+  margin-left: 5px;
+`
+
 function Boards({ boards, dispatch }) {
   return (
     <Div>
       <header>
-        <h1>板</h1>
+        <H1>看板</H1>
       </header>
       <CardContainer>
         {map(boards, board => (

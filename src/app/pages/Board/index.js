@@ -5,6 +5,7 @@ import styled from 'react-emotion'
 import React from 'react'
 import Title from './Title'
 import Board from './Board'
+import DocTitle from '~/app/components/Title'
 
 const Wrapper = styled.div`
   padding-top: 8px;
@@ -13,7 +14,7 @@ const Wrapper = styled.div`
 `
 
 const Header = styled.div`
-  padding: 4px 16px;
+  padding: 4px 8px;
 `
 
 const top = {
@@ -73,6 +74,7 @@ export default connect(({ boards, lists }, { match }) => ({
 
       return (
         <>
+          <DocTitle>{board.title}</DocTitle>
           <Header>
             <Title onChange={this.handleTitleUpdate}>{board.title}</Title>
             <div style={top}>

@@ -102,7 +102,7 @@ export default () => {
     const { scripts, styles } = getAssets(modules)
 
     res.status(context.status || 200).send(`<!DOCTYPE html>
-  <html>
+  <html lang="zh-Hans">
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">

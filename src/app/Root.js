@@ -29,7 +29,7 @@ const Index = Loadable({
 export default function Root() {
   return (
     <Frame>
-      <Title>Kanban</Title>
+      <Title />
       <Switch>
         <Route component={Index} path="/" exact />
         <Route component={Board} path="/board/:board_id" />
