@@ -12,6 +12,7 @@ const ContainerLists = styled.div`
   display: inline-flex;
   align-items: flex-start;
   height: 100%;
+  vertical-align: top;
 `
 
 const listPlaceHolder = css`

@@ -6,6 +6,11 @@ export const container = css`
   margin: 0 auto;
 `
 
+export const mainContainer = css`
+  ${container};
+  margin-top: 8px;
+`
+
 const headerHeight = 50
 const footerHeight = 50
 
@@ -17,8 +22,4 @@ export const header = css`
 
 export const mainWrapper = css`
   min-height: calc(100vh - ${headerHeight + footerHeight + 5}px);
-`
-
-export const footer = css`
-  height: ${footerHeight}px;
 `

@@ -42,7 +42,7 @@ const btnGapCSS = css`
 `
 
 const gap = {
-  margin: '8px 0',
+  marginTop: '8px',
 }
 
 class CustomTextArea extends React.Component {

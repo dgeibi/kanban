@@ -7,14 +7,18 @@ import Title from './Title'
 import Board from './Board'
 
 const Wrapper = styled.div`
-  padding: 0 8px;
+  padding-top: 8px;
   overflow-x: scroll;
-  height: calc(100vh - 165px);
+  height: calc(100vh - 147px);
 `
 
 const Header = styled.div`
   padding: 4px 16px;
 `
+
+const top = {
+  marginTop: '2px',
+}
 
 export default connect(({ boards, lists }, { match }) => ({
   board: boards && boards[match.params.board_id],
@@ -71,7 +75,7 @@ export default connect(({ boards, lists }, { match }) => ({
         <>
           <Header>
             <Title onChange={this.handleTitleUpdate}>{board.title}</Title>
-            <div>
+            <div style={top}>
               <Button onClick={this.remove}>删除看板</Button>
             </div>
           </Header>

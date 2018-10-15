@@ -2,7 +2,6 @@ import { Button, Icon } from 'antd'
 import React from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'react-emotion'
-import { css } from 'emotion'
 
 import Toggle from '~/app/components/Toggle'
 import List from './List'
@@ -16,8 +15,15 @@ const Container = styled.div`
   flex-direction: column;
   margin-right: ${grid}px;
   margin-left: ${grid}px;
-  max-height: 100%;
+  max-height: 99%;
   width: 250px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+
+  :focus {
+    outline: 0;
+    border-color: #d991c2;
+  }
 `
 
 const Header = styled.div`
@@ -27,10 +33,6 @@ const Header = styled.div`
   background-color: ${({ isDragging }) =>
     isDragging ? colors.blue.lighter : colors.blue.light};
   transition: background-color 0.1s ease;
-`
-
-const BottomStyle = css`
-  margin-bottom: ${grid}px;
 `
 
 class Column extends React.Component {
@@ -71,11 +73,7 @@ class Column extends React.Component {
                   onCancel={blur}
                 />
                 <div>
-                  {!clicked && (
-                    <Button onClick={click} className={BottomStyle}>
-                      添加卡片
-                    </Button>
-                  )}
+                  {!clicked && <Button onClick={click}>增加卡片</Button>}
                 </div>
               </>
             }

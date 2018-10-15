@@ -1,25 +1,12 @@
 import React from 'react'
-import { cx, css } from 'emotion'
 import Header from './Header'
-import { container, mainWrapper } from './css'
+import { mainContainer } from './css'
 
 export default function Frame({ children }) {
   return (
     <>
       <Header />
-      <div className={mainWrapper}>
-        <div
-          className={cx(
-            container,
-            css`
-              padding-top: 16px;
-              padding-bottom: 16px;
-            `
-          )}
-        >
-          {children}
-        </div>
-      </div>
+      <div className={mainContainer}>{children}</div>
     </>
   )
 }

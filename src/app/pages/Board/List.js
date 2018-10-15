@@ -34,8 +34,9 @@ const Wrapper = styled.div`
   background-color: ${({ isDraggingOver }) =>
     isDraggingOver ? colors.blue.lighter : colors.blue.light};
   opacity: ${({ isDropDisabled }) => (isDropDisabled ? 0.5 : 'inherit')};
-  padding: 0 ${grid}px;
+  padding: ${grid}px;
   overflow-y: scroll;
+  overflow-x: hidden;
 `
 
 class List extends Component {
