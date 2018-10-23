@@ -110,12 +110,14 @@ class Title extends React.Component {
   }
 
   submit = () => {
-    if (this.props.onChange) {
-      this.props.onChange(this.state.value)
+    if (this.state.value) {
+      if (this.props.onChange) {
+        this.props.onChange(this.state.value)
+      }
+      this.setState({
+        clicked: false,
+      })
     }
-    this.setState({
-      clicked: false,
-    })
   }
 
   render() {

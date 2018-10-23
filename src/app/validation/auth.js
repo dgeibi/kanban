@@ -43,6 +43,7 @@ export const emailOrUsername = [
       const errors = []
       if (
         typeof value === 'string' &&
+        value &&
         !normalizeEmail(value) &&
         !usernamePattern.test(value)
       ) {
