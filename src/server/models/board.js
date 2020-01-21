@@ -27,7 +27,7 @@ export default function(sequelize) {
     models.Board.belongsTo(models.User)
   }
   Board.findAndCheck = (id, user) =>
-    Board.findById(id, {
+    Board.findByPk(id, {
       attributes: ['id'],
     })
       .then(board => user.hasBoard(board))

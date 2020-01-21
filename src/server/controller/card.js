@@ -15,7 +15,7 @@ export const handleCardId = ({ models: { Card } }) => async (
   next,
   id
 ) => {
-  const card = await Card.findById(id)
+  const card = await Card.findByPk(id)
   if (await req.list.hasCard(card)) {
     req.card = card
     next()

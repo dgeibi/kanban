@@ -31,7 +31,7 @@ export const handleListId = ({ models: { List } }) => async (
   next,
   id
 ) => {
-  const list = await List.findById(id, {
+  const list = await List.findByPk(id, {
     attributes: ['id'],
   })
   if (!(await req.board.hasList(list))) {
@@ -43,7 +43,7 @@ export const handleListId = ({ models: { List } }) => async (
 }
 
 export const getList = ({ models: { List, Card } }) => async (req, res) => {
-  const list = await List.findById(req.list.id, {
+  const list = await List.findByPk(req.list.id, {
     include: [Card],
     order: [[Card, 'index']],
   })

@@ -16,7 +16,7 @@ export const reorderCards = ({ models }) => async (req, res, next) => {
   const findLists = listids =>
     Promise.all(
       listids.map(async id => {
-        const list = await List.findById(id, {
+        const list = await List.findByPk(id, {
           transaction,
           attributes: ['id'],
         })
@@ -124,7 +124,7 @@ export const handleBoardId = ({ models: { Board } }) => async (
   next,
   id
 ) => {
-  const inst = await Board.findById(id)
+  const inst = await Board.findByPk(id)
   if (!inst || req.user.id !== inst.userId) {
     res.status(403).end()
   } else {

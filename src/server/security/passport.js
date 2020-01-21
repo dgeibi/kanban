@@ -14,7 +14,7 @@ export default () => {
   })
 
   passport.deserializeUser((id, done) => {
-    User.findById(id, {
+    User.findByPk(id, {
       attributes: ['id', 'username', 'email'],
     })
       .then(user => {
