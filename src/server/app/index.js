@@ -12,7 +12,6 @@ export default ({ addTask }) => {
   const app = express()
   let preloadPromise = Loadable.preloadAll()
   addTask(preloadPromise)
-  app.use(handleError)
 
   app.use(logger('dev'))
   app.use(prepareStatic({ addTask }))
@@ -36,6 +35,7 @@ export default ({ addTask }) => {
       preloadPromise = Loadable.preloadAll()
     })
   }
+  app.use(handleError)
 
   return app
 }
